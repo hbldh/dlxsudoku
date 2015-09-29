@@ -1,1 +1,1 @@
-from hbldhdoku.sudoku import Sudoku, SudokuException
+from .sudoku import Sudoku, SudokuException
