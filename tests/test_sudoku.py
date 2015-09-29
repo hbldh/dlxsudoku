@@ -19,7 +19,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
-from hbldhdoku import Sudoku, SudokuException
+from hbldhdoku.sudoku import Sudoku
+from hbldhdoku.exceptions import SudokuException
 
 
 class TestSudoku(object):
