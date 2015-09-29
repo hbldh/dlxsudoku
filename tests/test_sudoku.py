@@ -19,21 +19,27 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
+import os
+
 from hbldhdoku.sudoku import Sudoku
 from hbldhdoku.exceptions import SudokuException
 
 
 class TestSudoku(object):
-    """Test Suite for Sukoku solver."""
+    """Test Suite for Sudoku solver."""
+
+    def __init__(self):
+        self.test_dir = os.path.dirname(os.path.abspath(__file__))
 
     def test_solve_simple_sudoku(self):
-        s = Sudoku.load_sudoku('./simple.sud')
+
+        s = Sudoku.load_sudoku(os.path.join(self.test_dir, 'simple.sud'))
         s.solve()
-        correct_solution = Sudoku.load_sudoku('./simple_sol.sud')
+        correct_solution = Sudoku.load_sudoku(os.path.join(self.test_dir, 'simple_sol.sud'))
         assert s == correct_solution
 
     def test_solve_medium_sudoku(self):
-        s = Sudoku.load_sudoku('./medium.sud')
+        s = Sudoku.load_sudoku(os.path.join(self.test_dir, 'medium.sud'))
         s.solve()
-        correct_solution = Sudoku.load_sudoku('./medium_sol.sud')
+        correct_solution = Sudoku.load_sudoku(os.path.join(self.test_dir, 'medium_sol.sud'))
         assert s == correct_solution
