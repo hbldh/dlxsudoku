@@ -5,7 +5,7 @@
 
 .. module:: setup
     :platform: Unix, Windows
-    :synopsis: The Python Packaging setup file for Empyrean.
+    :synopsis: The Python Packaging setup file.
 
 .. moduleauthor:: hbldh <henrik.blidh@nedomkull.com>
 
