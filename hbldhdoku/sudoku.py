@@ -16,9 +16,11 @@ from __future__ import print_function
 
 import os
 import re
-import numpy as np
+
+import six
 
 from hbldhdoku.exceptions import SudokuException
+from hbldhdoku import utils
 
 
 class Sudoku(object):
@@ -26,8 +28,8 @@ class Sudoku(object):
     def __init__(self, n=3):
         self.order = n
         self.side = n**2
-        self.matrix = np.zeros((n**2, n**2), 'int8')
-        self._values = np.array(range(0, (n**2)+1), 'int8')
+        self.matrix = utils.get_list_of_lists(self.side, self.side, fill_with=0)
+        self._values = six.moves.range(0, (n ** 2) + 1)
         self.solution_steps = []
 
         self._poss_rows = {}
@@ -39,8 +41,22 @@ class Sudoku(object):
 
     def __eq__(self, other):
         if isinstance(other, Sudoku):
-            return np.abs((self.matrix - other.matrix)).sum().sum() == 0
+            if self.order != other.order:
+                return False
+            for i in six.moves.range(self.side):
+                for j in six.moves.range(self.side):
+                    if self.matrix[i][j] != other.matrix[i][j]:
+                        return False
+            return True
         return False
+
+    @property
+    def is_solved(self):
+        for row in self.matrix:
+            for value in row:
+                if value == 0:
+                    return False
+        return True
 
     @classmethod
     def load_sudoku(cls, file_path, n=3):
@@ -54,7 +70,7 @@ class Sudoku(object):
 
         # TODO: Parse metadata in textfile as well.
         read_lines = read_lines.split('\n')
-        sudoku = np.zeros((self.side, self.side), 'int8')
+        sudoku = utils.get_list_of_lists(self.side, self.side, fill_with=0)
         s_lines = []
         pattern = re.compile(r"([1-9\*]{9,9})")
         for line in read_lines:
@@ -64,13 +80,14 @@ class Sudoku(object):
         # TODO: Make it work for larger Sudokus as well...
         if len(s_lines) != 9:
             raise SudokuException("File did not contain a correctly defined sudoku.")
-        for n, row in enumerate(s_lines):
-            sudoku[n, :] = eval(",".join([char for char in row.replace('*', '0')]))
+        for i, row in enumerate(s_lines):
+            for j, value in enumerate([int(c) for c in row.replace('*', '0')]):
+                sudoku[i][j] = value
         return sudoku
 
-    def solve(self):
+    def solve(self, verbose=False):
         n = 0
-        while 0 in self.matrix:
+        while not self.is_solved:
             n += 1
             self._update()
             # See if any position can be singled out.
@@ -81,28 +98,30 @@ class Sudoku(object):
                 continue
             else:
                 print(self.matrix)
-                raise SudokuException("This sudoku requires more advanced methods!")
-        print("Sudoku solved in {0} iterations!\n{1}".format(n,self.matrix))
-        for step in self.solution_steps:
-            print(step)
+                raise SudokuException("This Sudoku requires more advanced methods!")
+        if verbose:
+            print("Sudoku solved in {0} iterations!\n{1}".format(n, self.matrix))
+            for step in self.solution_steps:
+                print(step)
 
     def _update(self):
         # TODO: Use previously stored information.
-        for i in xrange(self.side):
+        for i in six.moves.range(self.side):
             self._poss_rows[i] = {}
             mat_i = (i // 3) * 3
             self._poss_mats[mat_i] = {}
-            for j in xrange(self.side):
+            for j in six.moves.range(self.side):
                 if j not in self._poss_cols:
                     self._poss_cols[j] = {}
                 mat_j = (j // 3) * 3
-                if not self.matrix[i, j]:
-                    possible_values = np.setdiff1d(
-                        self._values, self.matrix[i, :])
-                    possible_values = np.setdiff1d(
-                        possible_values, self.matrix[:, j])
-                    possible_values = np.setdiff1d(
-                        possible_values, self.matrix[mat_i:mat_i + 3, mat_j: mat_j + 3])
+                if not self.matrix[i][j]:
+                    possible_values = set(self._values).difference(self.matrix[i])
+                    possible_values = possible_values.difference(set([row[j] for row in self.matrix]))
+                    box = []
+                    for k in six.moves.range(mat_i, mat_i + 3):
+                        for kk in six.moves.range(mat_j, mat_j + 3):
+                            box.append(self.matrix[k][kk])
+                    possible_values = list(possible_values.difference(set(box)))
                     self._poss_rows[i][j] = possible_values
                     self._poss_cols[j][i] = possible_values
                     self._poss_mats[mat_i] = possible_values
@@ -113,7 +132,7 @@ class Sudoku(object):
             for ind_j in self._poss_rows[ind_i]:
                 if len(self._poss_rows[ind_i][ind_j]) == 1:
                     # Only one possible value. Assign.
-                    self.matrix[ind_i, ind_j] = self._poss_rows[ind_i][ind_j][0]
+                    self.matrix[ind_i][ind_j] = self._poss_rows[ind_i][ind_j][0]
                     self.solution_steps.append(self._format_step("NAKED",
                                                                  (ind_i, ind_j),
                                                                  self._poss_rows[ind_i][ind_j][0]))
@@ -131,10 +150,10 @@ class Sudoku(object):
                 possibles = self._poss_rows[ind_i][ind_j]
                 for ind_k in self._poss_rows[ind_i]:
                     if ind_k != ind_j:
-                        possibles = np.setdiff1d(possibles, self._poss_rows[ind_i][ind_k])
+                        possibles = list(set(possibles).difference(self._poss_rows[ind_i][ind_k]))
                 if len(possibles) == 1:
                     # Found a hidden single in a row!
-                    self.matrix[ind_i, ind_j] = possibles[0]
+                    self.matrix[ind_i][ind_j] = possibles[0]
                     self.solution_steps.append(self._format_step("HIDDEN-ROW",
                                                                  (ind_i, ind_j),
                                                                  possibles[0]))
@@ -146,10 +165,10 @@ class Sudoku(object):
                 possibles = self._poss_cols[ind_j][ind_i]
                 for ind_k in self._poss_cols[ind_j]:
                     if ind_k != ind_i:
-                        possibles = np.setdiff1d(possibles, self._poss_cols[ind_j][ind_k])
+                        possibles = list(set(possibles).difference(self._poss_cols[ind_j][ind_k]))
                 if len(possibles) == 1:
                     # Found a hidden single in a row!
-                    self.matrix[ind_i, ind_j] = possibles[0]
+                    self.matrix[ind_i][ind_j] = possibles[0]
                     self.solution_steps.append(self._format_step("HIDDEN-COL",
                                                                  (ind_i, ind_j),
                                                                  possibles[0]))
