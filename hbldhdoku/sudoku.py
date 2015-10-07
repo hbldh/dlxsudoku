@@ -89,6 +89,18 @@ class Sudoku(object):
         n = 0
         while not self.is_solved:
             n += 1
+            if len(self.solution_steps) > 2 and self.solution_steps[-1] == self.solution_steps[-2]:
+                for step in self.solution_steps:
+                    print(step)
+                print(self.matrix)
+                raise SudokuException("Identical steps error!")
+            if n > 100:
+                for step in self.solution_steps:
+                    print(step)
+                print(self.matrix)
+                raise SudokuException("Too many iterations run. Aborting...")
+
+
             self._update()
             # See if any position can be singled out.
             singles_found = False or self._fill_naked_singles() or self._fill_hidden_singles()
@@ -136,7 +148,8 @@ class Sudoku(object):
                     self.solution_steps.append(self._format_step("NAKED",
                                                                  (ind_i, ind_j),
                                                                  self._poss_rows[ind_i][ind_j][0]))
-                    simple_found = True
+                    return True
+
                 elif len(self._poss_rows[ind_i][ind_j]) == 0:
                     raise SudokuException("Error made! No possible value for ({0},{1})!",
                                           ind_i + 1, ind_j + 1)
@@ -157,7 +170,7 @@ class Sudoku(object):
                     self.solution_steps.append(self._format_step("HIDDEN-ROW",
                                                                  (ind_i, ind_j),
                                                                  possibles[0]))
-                    simple_found = True
+                    return True
 
         # Go through each column.
         for ind_j in self._poss_cols:
@@ -167,12 +180,12 @@ class Sudoku(object):
                     if ind_k != ind_i:
                         possibles = list(set(possibles).difference(self._poss_cols[ind_j][ind_k]))
                 if len(possibles) == 1:
-                    # Found a hidden single in a row!
+                    # Found a hidden single in a column!
                     self.matrix[ind_i][ind_j] = possibles[0]
                     self.solution_steps.append(self._format_step("HIDDEN-COL",
                                                                  (ind_i, ind_j),
                                                                  possibles[0]))
-                    simple_found = True
+                    return True
 
         # Go through each block.
         # TODO: Write block checker.
