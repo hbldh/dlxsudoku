@@ -22,7 +22,7 @@ from __future__ import absolute_import
 import six
 
 
-def get_list(n_rows, fill_with=0.0):
+def get_list(n_rows, fill_with=0):
     return [fill_with, ] * n_rows
 
 
