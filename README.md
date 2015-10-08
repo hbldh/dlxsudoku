@@ -18,7 +18,7 @@ Tests can be run using `nosetests`:
 
 ## Usage
 
-An sudoku can be solved as such:
+An Sudoku can be solved as such:
 
 ```python
 from hbldhdoku import Sudoku
@@ -30,7 +30,7 @@ print(s)
 
 ```
 
-A sudouko file should be structured as such:
+A Sudoku file should be structured in the following manner:
 
     # Optional comment or metadata
     *72****6*
