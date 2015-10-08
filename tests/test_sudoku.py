@@ -45,9 +45,14 @@ class TestSudoku(object):
         correct_solution = Sudoku.load_sudoku(os.path.join(self.test_dir, 'medium_sol.sud'))
         assert s == correct_solution
 
-    @raises(SudokuException)
     def test_solve_hard_sudoku(self):
         s = Sudoku.load_sudoku(os.path.join(self.test_dir, 'hard.sud'))
         s.solve()
         correct_solution = Sudoku.load_sudoku(os.path.join(self.test_dir, 'hard_sol.sud'))
         assert s == correct_solution
+
+    @raises(SudokuException)
+    def test_raises_error_when_unsolvable(self):
+        s = Sudoku.load_sudoku(os.path.join(self.test_dir, 'hard.sud'))
+        s.matrix[0][0] = 2
+        s.solve()
