@@ -47,7 +47,7 @@ class TestSudoku(object):
 
     def test_solve_hard_sudoku(self):
         s = Sudoku.load_sudoku(os.path.join(self.test_dir, 'hard.sud'))
-        s.solve()
+        s.solve(verbose=True)
         correct_solution = Sudoku.load_sudoku(os.path.join(self.test_dir, 'hard_sol.sud'))
         assert s == correct_solution
 
@@ -56,3 +56,11 @@ class TestSudoku(object):
         s = Sudoku.load_sudoku(os.path.join(self.test_dir, 'hard.sud'))
         s.matrix[0][0] = 2
         s.solve()
+
+    def test_equality(self):
+        s = Sudoku.load_sudoku(os.path.join(self.test_dir, 'hard_sol.sud'))
+        s2 = Sudoku.load_sudoku(os.path.join(self.test_dir, 'medium_sol.sud'))
+        s3 = Sudoku.load_sudoku(os.path.join(self.test_dir, 'hard_sol.sud'))
+        assert s != s2
+        assert s == s3
+

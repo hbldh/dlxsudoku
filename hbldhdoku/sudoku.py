@@ -102,7 +102,7 @@ class Sudoku(object):
                 # Found some uniquely defined. Run another iteration to see if new ones have shown up.
                 continue
             else:
-                # Could not
+                # Could not solve this Sudoku.
                 print(self.matrix)
                 raise SudokuException("This Sudoku requires more advanced methods!")
         if verbose:
