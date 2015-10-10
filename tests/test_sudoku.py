@@ -24,7 +24,7 @@ import os
 from nose.tools import raises
 
 from hbldhdoku.sudoku import Sudoku
-from hbldhdoku.exceptions import SudokuException
+from hbldhdoku.exceptions import SudokuException, SudokuHasNoSolutionError, SudokuTooDifficultError
 
 
 class TestSudoku(object):
@@ -51,7 +51,14 @@ class TestSudoku(object):
         correct_solution = Sudoku.load_sudoku(os.path.join(self.test_dir, 'hard_sol.sud'))
         assert s == correct_solution
 
-    @raises(SudokuException)
+    @raises(SudokuTooDifficultError)
+    def test_solve_very_hard_sudoku(self):
+        s = Sudoku.load_sudoku(os.path.join(self.test_dir, 'very_hard.sud'))
+        s.solve(verbose=True)
+        correct_solution = Sudoku.load_sudoku(os.path.join(self.test_dir, 'very_hard_sol.sud'))
+        assert s == correct_solution
+
+    @raises(SudokuHasNoSolutionError)
     def test_raises_error_when_unsolvable(self):
         s = Sudoku.load_sudoku(os.path.join(self.test_dir, 'hard.sud'))
         s.matrix[0][0] = 2

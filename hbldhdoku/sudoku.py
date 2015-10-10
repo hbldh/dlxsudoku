@@ -19,7 +19,7 @@ import re
 
 import six
 
-from hbldhdoku.exceptions import SudokuException
+from hbldhdoku.exceptions import SudokuException, SudokuHasNoSolutionError, SudokuTooDifficultError
 from hbldhdoku import utils
 
 
@@ -104,7 +104,7 @@ class Sudoku(object):
             else:
                 # Could not solve this Sudoku.
                 print(self.matrix)
-                raise SudokuException("This Sudoku requires more advanced methods!")
+                raise SudokuTooDifficultError("This Sudoku requires more advanced methods!")
         if verbose:
             print("Sudoku solved in {0} iterations!\n{1}".format(n, self.matrix))
             for step in self.solution_steps:
@@ -157,7 +157,7 @@ class Sudoku(object):
                     self.solution_steps.append(self._format_step("NAKED", (i, j), self.matrix[i][j]))
                     simple_found = True
                 elif len(p) == 0:
-                    raise SudokuException("Error made! No possible value for ({0},{1})!".format(i + 1, j + 1))
+                    raise SudokuHasNoSolutionError("Error made! No possible value for ({0},{1})!".format(i + 1, j + 1))
 
         return simple_found
 
@@ -218,9 +218,3 @@ class Sudoku(object):
     def _format_step(self, step_name, indices, value):
         return "[{0},{1}] = {2}, {3}".format(indices[0] + 1, indices[1] + 1, value, step_name)
 
-
-def main():
-    pass
-
-if __name__ == "__main__":
-    main()
