@@ -23,7 +23,7 @@ An Sudoku can be solved as such:
 ```python
 from hbldhdoku import Sudoku
 
-s = Sudoku.load_sudoku('path/to/sudoku.sud')
+s = Sudoku.load('path/to/sudoku.sud')
 print(s)
 s.solve()
 print(s)
