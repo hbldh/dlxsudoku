@@ -24,7 +24,7 @@ Tests can be run using `nosetests`:
     nosetests tests
 
 The tests make a HTTP request to a fiel containign several Sudokus on 
-[Project Euler]("https://projecteuler.net/project/resources/p096_sudoku.txt").
+[Project Euler](https://projecteuler.net/project/resources/p096_sudoku.txt).
 
 ## Usage
 
