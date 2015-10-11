@@ -21,7 +21,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='hbldhdoku',
-    version='0.5.0.b2',
+    version='0.5.0.b3',
     author='Henrik Blidh',
     author_email='henrik.blidh@nedomkull.com',
     description='Sudoku Solver',

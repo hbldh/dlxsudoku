@@ -196,7 +196,7 @@ class Sudoku(object):
         else:
             # Sudoku is defined on one line.
             order = int(math.sqrt(math.sqrt(len(read_lines[0]))))
-            read_lines = filter(lambda x: len(x) == (order **2), [read_lines[0][i:(i + order ** 2)] for
+            read_lines = filter(lambda x: len(x) == (order ** 2), [read_lines[0][i:(i + order ** 2)] for
                                 i in six.moves.xrange(len(read_lines[0])) if i % (order ** 2) == 0])
 
         out = cls(order)
