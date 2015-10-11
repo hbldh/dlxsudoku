@@ -94,7 +94,7 @@ class TestSudoku(object):
 
     def test_project_euler_sudokus(self):
         def test_fcn(input):
-            s = Sudoku.parse_from_file_object(six.StringIO("".join(input[1:])))
+            s = Sudoku.parse_from_file_object(six.BytesIO(six.b("".join(input[1:]))))
             s.solve()
             assert s.is_solved
         r = six.moves.urllib.request.urlopen("https://projecteuler.net/project/resources/p096_sudoku.txt")

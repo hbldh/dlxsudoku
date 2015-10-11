@@ -157,11 +157,7 @@ class Sudoku(object):
     @property
     def is_solved(self):
         """Returns ``True`` if all cells are filled with a number."""
-        for row in self.row_iter():
-            for value in row:
-                if value == 0:
-                    return False
-        return True
+        return all([(0 not in row) for row in self.row_iter()])
 
     @classmethod
     def load_file(cls, file_path):
