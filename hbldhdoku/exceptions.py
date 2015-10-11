@@ -22,3 +22,13 @@ from __future__ import absolute_import
 
 class SudokuException(Exception):
     pass
+
+
+class SudokuTooDifficultError(SudokuException):
+    """Raised when this solver is too incompetent to solve this Sudoku."""
+    pass
+
+
+class SudokuHasNoSolutionError(SudokuException):
+    """Raised when no solution is possible for this Sudoku."""
+    pass
