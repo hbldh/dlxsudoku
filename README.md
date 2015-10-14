@@ -5,7 +5,7 @@
 Sudoku Solver written in pure Python with no dependencies except 
 [Six: Python 2 and 3 Compatibility Library](https://pythonhosted.org/six/). 
 
-It can solve `9 x 9` Sudokus, by pure induction from possible values but also 
+It can solve `9 x 9` Sudokus by pure induction from possible values, but also 
 with an optional Brute Force methodology which is used for difficult specimens.
 
 It is designed for solution of Sudokus of arbitrary order, but this is as of yet
@@ -15,7 +15,7 @@ rather untested.
 
 Install by calling:
 
-    pip install https://github.com/hbldh/hbldhdoku
+    pip install git+https://github.com/hbldh/hbldhdoku
 
 ## Testing
 
@@ -23,7 +23,7 @@ Tests can be run using `nosetests`:
 
     nosetests tests
 
-The tests make a HTTP request to a fiel containign several Sudokus on 
+The tests make a HTTP request to a file containing several Sudokus on 
 [Project Euler]("https://projecteuler.net/project/resources/p096_sudoku.txt").
 
 ## Usage
@@ -34,9 +34,7 @@ An Sudoku can be solved as such:
 from hbldhdoku import Sudoku
 
 s = Sudoku.load_file('path/to/sudoku.sud')
-print(s)
 s.solve(verbose=True, allow_brute_force=True)
-print(s)
 
 ```
 
