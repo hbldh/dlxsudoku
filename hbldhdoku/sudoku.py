@@ -15,7 +15,6 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 import os
-import random
 import copy
 import math
 
@@ -138,23 +137,6 @@ class Sudoku(object):
         else:
             raise SudokuHasNoSolutionError("This value cannot be set here!")
 
-    def random_guess(self):
-        """Make a random guess on first encountered cell with fewest possibles.
-         
-         Used by Brute Force method.
-         
-        """
-        n_to_look_for = 2
-        while True:
-            for i in six.moves.range(self.side):
-                for j in six.moves.range(self.side):
-                    if len(self._possibles[i][j]) == n_to_look_for:
-                        self.set_cell(
-                            i, j, list(self._possibles[i][j])[random.randint(0, len(self._possibles[i][j])) - 1])
-                        self.solution_steps.append(self._format_step("RANDOM", (i, j), self[i][j]))
-                        return
-            n_to_look_for += 1
-
     @property
     def is_solved(self):
         """Returns ``True`` if all cells are filled with a number."""
@@ -212,6 +194,16 @@ class Sudoku(object):
         return out
 
     def solve(self, verbose=False, allow_brute_force=True):
+        """Solve the Sudoku.
+
+        :param verbose: If the steps used for solving the Sudoku
+                        should be printed. Default is `False`
+        :type verbose: bool
+        :param allow_brute_force: If Dancing Links Brute Force method
+                                  should be used if necessary. Deafult is `True`
+        :type allow_brute_force: bool
+
+        """
         while not self.is_solved:
             # Update possibles arrays.
             self._update()

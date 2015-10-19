@@ -26,7 +26,7 @@ with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md'))
 
 setup(
     name='hbldhdoku',
-    version='0.6.0',
+    version='0.7.0.dev1',
     author='Henrik Blidh',
     author_email='henrik.blidh@nedomkull.com',
     description='Sudoku Solver',
