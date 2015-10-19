@@ -25,8 +25,12 @@ from itertools import product
 class DancingLinksSolver(object):
     """A Dancing Links Algorithm solver for Sudokus.
 
-    This code has been copied pretty verbatim from
-    http://www.cs.mcgill.ca/~aassaf9/python/algorithm_x.html.
+    This code has been copied pretty verbatim from http://www.cs.mcgill.ca/~aassaf9/python/algorithm_x.html,
+    only modified slightly to accommodate class structure and
+
+    # Author: Ali Assaf <ali.assaf.mail@gmail.com>
+    # Copyright: (C) 2010 Ali Assaf
+    # License: GNU General Public License <http://www.gnu.org/licenses/>
 
     """
 

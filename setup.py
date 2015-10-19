@@ -17,16 +17,21 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import os
 from setuptools import setup, find_packages
+
+# Get the long description from the README file
+with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md')) as f:
+    long_description = f.read()
 
 setup(
     name='hbldhdoku',
-    version='0.6.0.dev2',
+    version='0.6.0',
     author='Henrik Blidh',
     author_email='henrik.blidh@nedomkull.com',
     description='Sudoku Solver',
-    long_description="TBD",
-    license='MIT',
+    long_description=long_description,
+    license='GNU GPLv2',
     url='https://github.com/hbldh/hbldhdoku',
     classifiers=[
         'Programming Language :: Python :: 2',
@@ -35,7 +40,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
         'Operating System :: POSIX :: Linux',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: MacOS :: MacOS X',
