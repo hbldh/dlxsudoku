@@ -70,7 +70,7 @@ class TestSudoku(object):
         s.solve(verbose=True, allow_brute_force=True)
         correct_solution = Sudoku.load_file(os.path.join(self.test_dir, 'very_hard_sol.sud'))
         assert s == correct_solution
-        assert 'RANDOM' in "".join(s.solution_steps)
+        assert 'BRUTE FORCE' in "".join(s.solution_steps)
 
     @raises(SudokuHasNoSolutionError)
     def test_raises_error_when_unsolvable(self):

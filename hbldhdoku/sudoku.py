@@ -23,6 +23,7 @@ import six
 
 from hbldhdoku.exceptions import SudokuHasNoSolutionError, SudokuTooDifficultError
 from hbldhdoku import utils
+from hbldhdoku.dancing_links import DancingLinksSolver
 
 
 class Sudoku(object):
@@ -223,30 +224,17 @@ class Sudoku(object):
             # Else, if singles_found is True, run another iteration to see if new singles have shown up.
             if not singles_found:
                 if allow_brute_force:
-                    n = 0
-                    while True:
-                        # Brute Force method can get stuck if no backtracking is allowed.
-                        # This cap on how many times it is allowed to try on any one level
-                        # might lead to a failed solution, but it is improbable.
-                        if n > 10:
-                            raise SudokuHasNoSolutionError("Brute Force method failed.")
-                        s = Sudoku(self.order)
-                        s._matrix = copy.deepcopy(self._matrix)
-                        s._update()
-                        s.random_guess()
-                        try:
-                            s.solve()
-                        except SudokuHasNoSolutionError:
-                            # Incorrect guess. Try once again.
-                            n += 1
-                            pass
-                        else:
-                            # The guess was correct and a solution could be found. Copy the solution
-                            # back to this instance along with the solution steps and break this
-                            # brute force loop.
-                            self._matrix = copy.deepcopy(s._matrix)
-                            self.solution_steps += s.solution_steps
-                            break
+                    dlxs = DancingLinksSolver(copy.deepcopy(self._matrix))
+                    solutions = list(dlxs.solve())
+                    if len(solutions) == 1:
+                        self._matrix = solutions[0]
+                    elif len(solutions) > 1:
+                        print("This Sudoku has multiple solutions!")
+                        self._matrix = solutions[0]
+                    else:
+                        raise SudokuHasNoSolutionError("Brute Force method failed.")
+                    self.solution_steps.append("BRUTE FORCE - Dancing Links")
+                    break
                 else:
                     print(self)
                     raise SudokuTooDifficultError("This Sudoku requires more advanced methods!")

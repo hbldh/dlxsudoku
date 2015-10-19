@@ -6,10 +6,10 @@ Sudoku Solver written in pure Python with no dependencies except
 [Six: Python 2 and 3 Compatibility Library](https://pythonhosted.org/six/). 
 
 It can solve `9 x 9` Sudokus by pure induction from possible values, but also 
-with an optional Brute Force methodology which is used for difficult specimens.
+with an optional [Brute Force methodology](https://en.wikipedia.org/wiki/Dancing_Links) 
+which is used for difficult specimens.
 
-It is designed for solution of Sudokus of arbitrary order, but this is as of yet
-rather untested.
+It is designed for solution of Sudokus of arbitrary order, but this is rather untested as of yet.
 
 ## Installation
 
