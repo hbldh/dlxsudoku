@@ -21,7 +21,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='hbldhdoku',
-    version='0.6.0.dev1',
+    version='0.6.0.dev2',
     author='Henrik Blidh',
     author_email='henrik.blidh@nedomkull.com',
     description='Sudoku Solver',
@@ -29,8 +29,10 @@ setup(
     license='MIT',
     url='https://github.com/hbldh/hbldhdoku',
     classifiers=[
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'License :: OSI Approved :: MIT License',

@@ -74,11 +74,16 @@ class DancingLinksSolver(object):
             yield grid
 
     def _exact_cover(self, X, Y):
-        X = {j: set() for j in X}
+        # Dict comprehension does not exist in Python 2.6...
+        # X = {j: set() for j in X}
+        X_out = {}
+        for j in X:
+            X_out[j] = set()
+
         for i, row in Y.items():
             for j in row:
-                X[j].add(i)
-        return X, Y
+                X_out[j].add(i)
+        return X_out, Y
 
     def _solve(self, X, Y, solution):
         if not X:
