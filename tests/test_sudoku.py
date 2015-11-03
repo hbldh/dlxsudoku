@@ -78,6 +78,12 @@ class TestSudoku(object):
         s._matrix[0][0] = 2
         s.solve()
 
+    @raises(SudokuHasNoSolutionError)
+    def test_raises_error_when_unsolvable_2(self):
+        s = Sudoku.load_file(os.path.join(self.test_dir, 'hard.sud'))
+        s._matrix[2][7] = 6
+        s.solve()
+
     def test_equality(self):
         s = Sudoku.load_file(os.path.join(self.test_dir, 'hard_sol.sud'))
         s2 = Sudoku.load_file(os.path.join(self.test_dir, 'medium_sol.sud'))
@@ -91,6 +97,7 @@ class TestSudoku(object):
         print(s)
         s = Sudoku.load_file(os.path.join(self.test_dir, 'simple_flat.sud'))
         print(s)
+        assert str(s) == repr(s)
 
     def test_project_euler_sudokus(self):
         def test_fcn(input):

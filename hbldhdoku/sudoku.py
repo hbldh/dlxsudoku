@@ -54,7 +54,14 @@ class Sudoku(object):
             prefix = "{0}".format(self.comment)
         else:
             prefix = ''
-        return prefix + "\n".join(["".join([str(v) for v in row]).replace('0', '*') for row in self.row_iter()])
+        sudoku = ''
+        for i, row in enumerate(self.row_iter()):
+            if i % self.order == 0 and i > 0:
+                str_row = '-' * self.side
+                sudoku += "+".join([str_row[j:j + self.order] for j in range(0, len(str_row), self.order)]) + '\n'
+            str_row = "".join([str(v) for v in row]).replace('0', '*')
+            sudoku += "|".join([str_row[j:j + self.order] for j in range(0, len(str_row), self.order)]) + '\n'
+        return prefix + sudoku
 
     def __repr__(self):
         return str(self)
@@ -339,3 +346,18 @@ class Sudoku(object):
         """Help method for formatting solution step history."""
         return "[{0},{1}] = {2}, {3}".format(indices[0] + 1, indices[1] + 1, value, step_name)
 
+
+def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('path', type=str, help="Path to the Sudoku to solve.")
+    parser.add_argument('-v', action='store_true', help="Print solution steps.")
+    parser.add_argument('--no-brute-force', action='store_false', help="Print solution steps.")
+    args = parser.parse_args()
+
+    s = Sudoku.load_file(os.path.abspath(os.path.expanduser(args.path)))
+    s.solve(verbose=args.v, allow_brute_force=args.no_brute_force)
+    print(s)
+
+if __name__ == "__main__":
+    main()
