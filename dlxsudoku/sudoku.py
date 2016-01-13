@@ -34,18 +34,72 @@ class Sudoku(object):
 
     """
 
-    def __init__(self, order=3):
+    def __init__(self, string_input):
+
+        self.order, self.comment, self._matrix = \
+            self._parse_from_string(string_input)
+
         self.comment = ''
-        self.order = order
-        self.side = order**2
+        self.side = self.order ** 2
         self.solution_steps = []
 
-        self._matrix = utils.get_list_of_lists(self.side, self.side, fill_with=0)
-        self._values = tuple(utils.range_(0, (order ** 2) + 1))
+        self._values = tuple(utils.range_(0, (self.order ** 2) + 1))
         self._poss_rows = {}
         self._poss_cols = {}
         self._poss_box = {}
         self._possibles = {}
+
+    @classmethod
+    def load_file(cls, file_path):
+        """Load a Sudoku from file.
+
+        :param file_path: The path to the file to load_file.
+        :type file_path: str, unicode
+        :return: A Sudoku instance with the parsed
+                 information from the file.
+        :rtype: :py:class:`dlxsudoku.sudoku.Sudoku`
+
+        """
+        with open(os.path.abspath(file_path), 'rt') as f:
+            s = Sudoku(f.read().strip())
+        return s
+
+    @staticmethod
+    def _parse_from_string(string_input):
+        """Parses a Sudoku instance from string input.
+
+        :param string_input: A string containing the Sudoku to parse.
+        :type string_input: str
+        :return: The parsed Sudoku.
+        :rtype: :py:class:`dlxsudoku.sudoku.Sudoku`
+
+        """
+        # Check if comment line is present.
+        read_lines = string_input.split('\n')
+        if read_lines[0].startswith('#'):
+            comment = read_lines.pop(0)
+        else:
+            comment = ''
+
+        if len(read_lines) > 1:
+            # Assume that Sudoku is defined over several rows.
+            order = int(math.sqrt(len(read_lines)))
+        else:
+            # Sudoku is defined on one line.
+            order = int(math.sqrt(math.sqrt(len(read_lines[0]))))
+            read_lines = filter(lambda x: len(x) == (order ** 2), [read_lines[0][i:(i + order ** 2)] for
+                                i in utils.range_(len(read_lines[0])) if i % (order ** 2) == 0])
+        matrix = utils.get_list_of_lists(
+            order ** 2, order ** 2, fill_with=0)
+
+        for i, line in enumerate(read_lines):
+            line = line.strip()
+            for j, value in enumerate(line):
+                if value.isdigit() and int(value):
+                    matrix[i][j] = int(value)
+                else:
+                    matrix[i][j] = 0
+        return order, comment, matrix
 
     def __str__(self):
         if self.comment:
@@ -63,6 +117,9 @@ class Sudoku(object):
 
     def __repr__(self):
         return str(self)
+
+    def to_oneliner(self):
+        return "".join(["".join([str(value) for value in row]) for row in self.row_iter()])
 
     def __eq__(self, other):
         if isinstance(other, Sudoku):
@@ -116,7 +173,7 @@ class Sudoku(object):
                 yield self.box(i * 3, j * 3)
 
     def set_cell(self, i, j, value):
-        """Set a cell's value, with a series of safety checks.
+        """Set a cell's value, with a series of safety checks
 
         :param i: The row number
         :type i: int
@@ -124,7 +181,7 @@ class Sudoku(object):
         :type j: int
         :param value: The value to set
         :type value: int
-        :raises: :py:class:`hbldhdoku.exceptions.SudokuHasNoSolutionError`
+        :raises: :py:class:`dlxsudoku.exceptions.SudokuHasNoSolutionError`
 
         """
         bool_tests = [
@@ -146,60 +203,6 @@ class Sudoku(object):
     def is_solved(self):
         """Returns ``True`` if all cells are filled with a number."""
         return all([(0 not in row) for row in self.row_iter()])
-
-    @classmethod
-    def load_file(cls, file_path):
-        """Load a Sudoku from file.
-
-        :param file_path: The path to the file to load_file.
-        :type file_path: str, unicode
-        :return: A Sudoku instance with the parsed information from the file.
-        :rtype: :py:class:`hbldhdoku.sudoku.Sudoku`
-
-        """
-        with open(os.path.abspath(file_path), 'rt') as f:
-            s = cls.parse_from_file_object(f)
-        return s
-
-    @classmethod
-    def parse_from_file_object(cls, f):
-        """Reads a Sudoku from a FileType object and parses it into a Sudoku instance.
-
-        :param f: Any FileType object containing readable data.
-        :type f: :py:class:`types.FileType`
-        :return: The parsed Sudoku
-        :rtype: :py:class:`hbldhdoku.sudoku.Sudoku`
-
-        """
-        read_lines = f.readlines()
-        # Check if comment line is present.
-        if read_lines[0].startswith('#'):
-            comment = read_lines.pop(0)
-        else:
-            comment = ''
-
-        if len(read_lines) > 1:
-            # Assume that Sudoku is defined over several rows.
-            order = int(math.sqrt(len(read_lines)))
-        else:
-            # Sudoku is defined on one line.
-            order = int(math.sqrt(math.sqrt(len(read_lines[0]))))
-            read_lines = filter(lambda x: len(x) == (order ** 2), [read_lines[0][i:(i + order ** 2)] for
-                                i in utils.range_(len(read_lines[0])) if i % (order ** 2) == 0])
-
-        out = cls(order)
-        out.comment = comment
-        for i, line in enumerate(read_lines):
-            line = line.strip()
-            for j, value in enumerate(line):
-                if value.isdigit() and int(value):
-                    out._matrix[i][j] = int(value)
-                else:
-                    out._matrix[i][j] = 0
-        return out
-
-    def to_oneliner(self):
-        return "".join(["".join([str(value) for value in row]) for row in self.row_iter()])
 
     def solve(self, verbose=False, allow_brute_force=True):
         """Solve the Sudoku.
@@ -339,7 +342,8 @@ class Sudoku(object):
 
         return False
 
-    def _format_step(self, step_name, indices, value):
+    @staticmethod
+    def _format_step(step_name, indices, value):
         """Help method for formatting solution step history."""
         return "[{0},{1}] = {2}, {3}".format(indices[0] + 1, indices[1] + 1, value, step_name)
 

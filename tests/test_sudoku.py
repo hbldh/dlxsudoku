@@ -20,11 +20,15 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 
 import os
+try:
+    import urllib.request as urlrequest
+except ImportError:
+    import urllib as urlrequest
 
-import six
 from nose.tools import raises
 
 from dlxsudoku.sudoku import Sudoku
+from dlxsudoku.utils import range_
 from dlxsudoku.exceptions import SudokuException, SudokuHasNoSolutionError, SudokuTooDifficultError
 
 
@@ -64,7 +68,7 @@ class TestSudoku(object):
         correct_solution = Sudoku.load_file(os.path.join(self.test_dir, 'hard_sol.sud'))
         assert s == correct_solution
         oneliner = s.to_oneliner()
-        oneliner_parsed = Sudoku.parse_from_file_object(six.StringIO(six.b(oneliner).decode('ascii')))
+        oneliner_parsed = Sudoku(oneliner)
         assert oneliner_parsed == correct_solution
 
     @raises(SudokuTooDifficultError)
@@ -110,11 +114,32 @@ class TestSudoku(object):
 
     def test_project_euler_sudokus(self):
         def test_fcn(input):
-            s = Sudoku.parse_from_file_object(six.StringIO((six.b("").join(input[1:])).decode('ascii')))
+            input[0] = b"# " + input[0]
+            s = Sudoku("".join([i.decode("utf-8") for i in input]).strip())
             s.solve()
             assert s.is_solved
-        r = six.moves.urllib.request.urlopen("https://projecteuler.net/project/resources/p096_sudoku.txt")
+        r = urlrequest.urlopen("https://projecteuler.net/project/resources/p096_sudoku.txt")
         sudokus = r.readlines()
-        for k in six.moves.xrange(0, len(sudokus), 10):
+        for k in range_(0, len(sudokus), 10):
             yield test_fcn, sudokus[k:k+10]
 
+    def test_README_code(self):
+        sudoku_string_1 = "030467050920010006067300148301006027400850600090200400005624001203000504040030702"
+        sudoku_string_2 = "# Example Sudoku\n" + \
+                          "*72****6*\n" + \
+                          "***72*9*4\n" + \
+                          "*9*1****2\n" + \
+                          "*******4*\n" + \
+                          "82*4*71**\n" + \
+                          "**9*6*8**\n" + \
+                          "***9**6**\n" + \
+                          "**3*72*9*\n" + \
+                          "*6*843*7*"
+
+        s1 = Sudoku(sudoku_string_1)
+        s1.solve()
+        assert s1.is_solved
+
+        s2 = Sudoku(sudoku_string_2)
+        s2.solve()
+        assert s2.is_solved

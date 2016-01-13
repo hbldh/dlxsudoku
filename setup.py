@@ -26,7 +26,7 @@ with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md'))
 
 setup(
     name='dlxsudoku',
-    version='0.8.0a3',
+    version='0.9.0',
     author='Henrik Blidh',
     author_email='henrik.blidh@nedomkull.com',
     description='Sudoku Solver in pure Python with no dependencies',
@@ -34,6 +34,9 @@ setup(
     license='GNU GPLv2',
     url='https://github.com/hbldh/dlxsudoku',
     classifiers=[
+        'Development Status :: 4 - Beta',
+        'Operating System :: OS Independent',
+        'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
@@ -41,11 +44,6 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
-        'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
-        'Operating System :: POSIX :: Linux',
-        'Operating System :: Microsoft :: Windows',
-        'Operating System :: MacOS :: MacOS X',
-        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
     ],
     packages=find_packages(exclude=('tests', )),

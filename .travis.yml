@@ -12,5 +12,4 @@ branches:
     - develop
 install:
   - "pip install coverage"
-  - "pip install six"
 script: nosetests tests --with-coverage --cover-package=dlxsudoku
