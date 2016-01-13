@@ -21,12 +21,16 @@ import os
 from setuptools import setup, find_packages
 
 # Get the long description from the README file
-with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md')) as f:
-    long_description = f.read()
+try:
+    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.rst')) as f:
+        long_description = f.read()
+except:
+    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md')) as f:
+        long_description = f.read()
 
 setup(
     name='dlxsudoku',
-    version='0.9.0',
+    version='0.9.1rc1',
     author='Henrik Blidh',
     author_email='henrik.blidh@nedomkull.com',
     description='Sudoku Solver in pure Python with no dependencies',
@@ -46,6 +50,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Intended Audience :: Developers',
     ],
+    keywords=["sudoku", "sudoku solver", "dancing links"],
     packages=find_packages(exclude=('tests', )),
     install_requires=[],
     package_data={},
