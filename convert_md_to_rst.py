@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-:mod:`register`
-==================
+:mod:`convert_md_to_rst`
+========================
 
 Created by hbldh <henrik.blidh@nedomkull.com>
 Created on 2016-01-13
