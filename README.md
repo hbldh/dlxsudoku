@@ -14,7 +14,7 @@ induction is not enough.
 
 Install by calling:
 
-    pip install git+https://github.com/hbldh/dlxsudoku
+    pip install dlxsudoku
 
 ## Testing
 
