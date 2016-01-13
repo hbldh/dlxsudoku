@@ -1,21 +1,18 @@
-# hbldhdoku
+# DLXSudoku
 
 [![Build Status](https://travis-ci.org/hbldh/hbldhdoku.svg?branch=master)](https://travis-ci.org/hbldh/hbldhdoku)
 
-Sudoku Solver written in pure Python with no dependencies except 
-[Six: Python 2 and 3 Compatibility Library](https://pythonhosted.org/six/). 
-
-It can solve `9 x 9` Sudokus by pure induction from possible values, but also 
-with an optional [Brute Force methodology](https://en.wikipedia.org/wiki/Dancing_Links) 
-which is used for difficult specimens.
-
-It is designed for solution of Sudokus of arbitrary order, but this is rather untested as of yet.
+Sudoku Solver written in pure Python with no dependencies (tests require  
+[Six: Python 2 and 3 Compatibility Library](https://pythonhosted.org/six/)).
+It can solve Sudokus of sizes `N x N` by pure induction from possible values, but also 
+with an optional [Dancing Links](https://en.wikipedia.org/wiki/Dancing_Links) solver 
+which is a brute force methodology used for difficult specimens.
 
 ## Installation
 
 Install by calling:
 
-    pip install git+https://github.com/hbldh/hbldhdoku
+    pip install git+https://github.com/hbldh/dlxsudoku
 
 ## Testing
 
@@ -31,7 +28,7 @@ The tests make a HTTP request to a file containing several Sudokus on
 An Sudoku can be solved as such:
 
 ```python
-from hbldhdoku import Sudoku
+from dlxsudoku import Sudoku
 
 s = Sudoku.load_file('path/to/sudoku.sud')
 s.solve(verbose=True, allow_brute_force=True)

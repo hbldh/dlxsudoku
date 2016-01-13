@@ -5,10 +5,12 @@ python:
   - 2.7
   - 3.3
   - 3.4
+  - 3.5
 branches:
   only:
     - master
     - develop
 install:
-  - "pip install -r requirements.txt"
-script: nosetests tests
+  - "pip install coverage"
+  - "pip install six"
+script: nosetests tests --with-coverage --cover-package=dlxsudoku

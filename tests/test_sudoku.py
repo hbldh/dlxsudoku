@@ -6,7 +6,7 @@
 
 .. module:: test_sudoku
     :platform: Unix, Windows
-    :synopsis: 
+    :synopsis:
 
 .. moduleauthor:: hbldh <henrik.blidh@nedomkull.com>
 
@@ -24,8 +24,8 @@ import os
 import six
 from nose.tools import raises
 
-from hbldhdoku.sudoku import Sudoku
-from hbldhdoku.exceptions import SudokuException, SudokuHasNoSolutionError, SudokuTooDifficultError
+from dlxsudoku.sudoku import Sudoku
+from dlxsudoku.exceptions import SudokuException, SudokuHasNoSolutionError, SudokuTooDifficultError
 
 
 class TestSudoku(object):
