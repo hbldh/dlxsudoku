@@ -1,6 +1,6 @@
 # DLXSudoku
 
-[![Build Status](https://travis-ci.org/hbldh/hbldhdoku.svg?branch=master)](https://travis-ci.org/hbldh/hbldhdoku)
+[![Build Status](https://travis-ci.org/hbldh/dlxsudoku.svg)](https://travis-ci.org/hbldh/dlxsudoku)
 
 Sudoku Solver written in pure Python with no dependencies (tests require  
 [Six: Python 2 and 3 Compatibility Library](https://pythonhosted.org/six/)).

@@ -26,7 +26,7 @@ with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md'))
 
 setup(
     name='dlxsudoku',
-    version='0.8.0a2',
+    version='0.8.0a3',
     author='Henrik Blidh',
     author_email='henrik.blidh@nedomkull.com',
     description='Sudoku Solver in pure Python with no dependencies',
