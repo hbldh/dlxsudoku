@@ -22,8 +22,8 @@ Tests can be run using `nosetests`:
 
     nosetests tests
 
-The tests make a HTTP request to a file containing several Sudokus on 
-[Project Euler]("https://projecteuler.net/project/resources/p096_sudoku.txt").
+The tests make a HTTP request to a file containing several 
+Sudokus on [Project Euler](https://projecteuler.net/project/resources/p096_sudoku.txt).
 
 ## Usage
 
@@ -56,11 +56,15 @@ sudoku_string_2 = "# Example Sudoku\n" + \
 
 s1 = Sudoku(sudoku_string_1)
 s1.solve()
+print(s1.to_oneliner())
 
 s2 = Sudoku(sudoku_string_2)
 s2.solve()
+print(s2)
 
 ```
+
+### Sudoku formatting
 
 A Sudoku file or string should be structured in the following manner:
 

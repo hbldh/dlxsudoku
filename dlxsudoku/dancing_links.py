@@ -77,7 +77,8 @@ class DancingLinksSolver(object):
                 grid[r][c] = n
             yield grid
 
-    def _exact_cover(self, X, Y):
+    @staticmethod
+    def _exact_cover(X, Y):
         # Dict comprehension does not exist in Python 2.6...
         # X = {j: set() for j in X}
         X_out = {}
@@ -102,7 +103,8 @@ class DancingLinksSolver(object):
                 self._deselect(X, Y, r, cols)
                 solution.pop()
 
-    def _select(self, X, Y, r):
+    @staticmethod
+    def _select(X, Y, r):
         cols = []
         for j in Y[r]:
             for i in X[j]:
@@ -112,7 +114,8 @@ class DancingLinksSolver(object):
             cols.append(X.pop(j))
         return cols
 
-    def _deselect(self, X, Y, r, cols):
+    @staticmethod
+    def _deselect(X, Y, r, cols):
         for j in reversed(Y[r]):
             X[j] = cols.pop()
             for i in X[j]:
