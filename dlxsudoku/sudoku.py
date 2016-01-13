@@ -198,6 +198,9 @@ class Sudoku(object):
                     out._matrix[i][j] = 0
         return out
 
+    def to_oneliner(self):
+        return "".join(["".join([str(value) for value in row]) for row in self.row_iter()])
+
     def solve(self, verbose=False, allow_brute_force=True):
         """Solve the Sudoku.
 
@@ -205,7 +208,7 @@ class Sudoku(object):
                         should be printed. Default is `False`
         :type verbose: bool
         :param allow_brute_force: If Dancing Links Brute Force method
-                                  should be used if necessary. Deafult is `True`
+                                  should be used if necessary. Default is `True`
         :type allow_brute_force: bool
 
         """
@@ -242,25 +245,21 @@ class Sudoku(object):
 
     def _update(self):
         """Calculate remaining values for each row, column, box and finally cell."""
-        # Update possible values in each row and each column.
-        for i in utils.range_(self.side):
-            self._poss_cols[i] = set(self._values).difference(set(self.col(i)))
-            self._poss_rows[i] = set(self._values).difference(self.row(i))
-        # Update possible values for each of the boxes.
-        for i, box in enumerate(self.box_iter()):
+        # Update possible values in each row, column and box.
+        for i, (row, col, box) in enumerate(zip(self.row_iter(), self.col_iter(), self.box_iter())):
+            self._poss_rows[i] = set(self._values).difference(set(row))
+            self._poss_cols[i] = set(self._values).difference(set(col))
             self._poss_box[i] = set(self._values).difference(set(box))
 
         # Iterate over the entire Sudoku and combine information about possible values
         # from rows, columns and boxes to get a set of possible values for each cell.
         for i in utils.range_(self.side):
             self._possibles[i] = {}
-            box_i = (i // self.order)
             for j in utils.range_(self.side):
                 self._possibles[i][j] = set()
-                box_j = (j // self.order)
-                this_box_index = (box_i * self.order) + box_j
                 if self[i][j] > 0:
                     continue
+                this_box_index = ((i // self.order) * self.order) + (j // self.order)
                 self._possibles[i][j] = self._poss_rows[i].intersection(
                     self._poss_cols[j]).intersection(self._poss_box[this_box_index])
 
