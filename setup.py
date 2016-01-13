@@ -25,14 +25,14 @@ with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md'))
     long_description = f.read()
 
 setup(
-    name='hbldhdoku',
-    version='0.7.0',
+    name='dlxsudoku',
+    version='0.8.0',
     author='Henrik Blidh',
     author_email='henrik.blidh@nedomkull.com',
-    description='Sudoku Solver',
+    description='Sudoku Solver in pure Python with no dependencies',
     long_description=long_description,
     license='GNU GPLv2',
-    url='https://github.com/hbldh/hbldhdoku',
+    url='https://github.com/hbldh/dlxsudoku',
     classifiers=[
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
@@ -40,6 +40,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
         'Operating System :: POSIX :: Linux',
         'Operating System :: Microsoft :: Windows',
@@ -47,9 +48,9 @@ setup(
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
     ],
-    packages=find_packages(),
-    install_requires=[line.strip() for line in open("requirements.txt")],
-    package_data={'tests': ['*.sud', ]},
+    packages=find_packages(exclude=('tests', )),
+    install_requires=[],
+    package_data={},
     dependency_links=[],
     ext_modules=[],
 )

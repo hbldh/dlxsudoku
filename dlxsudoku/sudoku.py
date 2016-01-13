@@ -18,11 +18,9 @@ import os
 import copy
 import math
 
-import six
-
-from hbldhdoku.exceptions import SudokuHasNoSolutionError, SudokuTooDifficultError
-from hbldhdoku import utils
-from hbldhdoku.dancing_links import DancingLinksSolver
+from dlxsudoku.exceptions import SudokuHasNoSolutionError, SudokuTooDifficultError
+from dlxsudoku import utils
+from dlxsudoku.dancing_links import DancingLinksSolver
 
 
 class Sudoku(object):
@@ -43,7 +41,7 @@ class Sudoku(object):
         self.solution_steps = []
 
         self._matrix = utils.get_list_of_lists(self.side, self.side, fill_with=0)
-        self._values = tuple(six.moves.range(0, (order ** 2) + 1))
+        self._values = tuple(utils.range_(0, (order ** 2) + 1))
         self._poss_rows = {}
         self._poss_cols = {}
         self._poss_box = {}
@@ -70,8 +68,8 @@ class Sudoku(object):
         if isinstance(other, Sudoku):
             if self.order != other.order:
                 return False
-            for i in six.moves.range(self.side):
-                for j in six.moves.range(self.side):
+            for i in utils.range_(self.side):
+                for j in utils.range_(self.side):
                     if self[i][j] != other[i][j]:
                         return False
             return True
@@ -89,7 +87,7 @@ class Sudoku(object):
 
     def row_iter(self):
         """Get an iterator over all rows in the Sudoku"""
-        for k in six.moves.range(self.side):
+        for k in utils.range_(self.side):
             yield self.row(k)
 
     def col(self, n):
@@ -98,7 +96,7 @@ class Sudoku(object):
 
     def col_iter(self):
         """Get an iterator over all columns in the Sudoku"""
-        for k in six.moves.range(self.side):
+        for k in utils.range_(self.side):
             yield self.col(k)
 
     def box(self, row, col):
@@ -106,26 +104,26 @@ class Sudoku(object):
         box = []
         box_i = (row // self.order) * self.order
         box_j = (col // self.order) * self.order
-        for i in six.moves.range(box_i, box_i + self.order):
-            for j in six.moves.range(box_j, box_j + self.order):
+        for i in utils.range_(box_i, box_i + self.order):
+            for j in utils.range_(box_j, box_j + self.order):
                 box.append(self[i][j])
         return box
 
     def box_iter(self):
         """Get an iterator over all boxes in the Sudoku"""
-        for i in six.moves.range(self.order):
-            for j in six.moves.range(self.order):
+        for i in utils.range_(self.order):
+            for j in utils.range_(self.order):
                 yield self.box(i * 3, j * 3)
 
     def set_cell(self, i, j, value):
         """Set a cell's value, with a series of safety checks.
-        
+
         :param i: The row number
-        :type i: int 
+        :type i: int
         :param j: The column number
         :type j: int
         :param value: The value to set
-        :type value: int 
+        :type value: int
         :raises: :py:class:`hbldhdoku.exceptions.SudokuHasNoSolutionError`
 
         """
@@ -187,7 +185,7 @@ class Sudoku(object):
             # Sudoku is defined on one line.
             order = int(math.sqrt(math.sqrt(len(read_lines[0]))))
             read_lines = filter(lambda x: len(x) == (order ** 2), [read_lines[0][i:(i + order ** 2)] for
-                                i in six.moves.xrange(len(read_lines[0])) if i % (order ** 2) == 0])
+                                i in utils.range_(len(read_lines[0])) if i % (order ** 2) == 0])
 
         out = cls(order)
         out.comment = comment
@@ -200,6 +198,9 @@ class Sudoku(object):
                     out._matrix[i][j] = 0
         return out
 
+    def to_oneliner(self):
+        return "".join(["".join([str(value) for value in row]) for row in self.row_iter()])
+
     def solve(self, verbose=False, allow_brute_force=True):
         """Solve the Sudoku.
 
@@ -207,7 +208,7 @@ class Sudoku(object):
                         should be printed. Default is `False`
         :type verbose: bool
         :param allow_brute_force: If Dancing Links Brute Force method
-                                  should be used if necessary. Deafult is `True`
+                                  should be used if necessary. Default is `True`
         :type allow_brute_force: bool
 
         """
@@ -244,25 +245,21 @@ class Sudoku(object):
 
     def _update(self):
         """Calculate remaining values for each row, column, box and finally cell."""
-        # Update possible values in each row and each column.
-        for i in six.moves.range(self.side):
-            self._poss_cols[i] = set(self._values).difference(set(self.col(i)))
-            self._poss_rows[i] = set(self._values).difference(self.row(i))
-        # Update possible values for each of the boxes.
-        for i, box in enumerate(self.box_iter()):
+        # Update possible values in each row, column and box.
+        for i, (row, col, box) in enumerate(zip(self.row_iter(), self.col_iter(), self.box_iter())):
+            self._poss_rows[i] = set(self._values).difference(set(row))
+            self._poss_cols[i] = set(self._values).difference(set(col))
             self._poss_box[i] = set(self._values).difference(set(box))
 
         # Iterate over the entire Sudoku and combine information about possible values
         # from rows, columns and boxes to get a set of possible values for each cell.
-        for i in six.moves.range(self.side):
+        for i in utils.range_(self.side):
             self._possibles[i] = {}
-            box_i = (i // self.order)
-            for j in six.moves.range(self.side):
+            for j in utils.range_(self.side):
                 self._possibles[i][j] = set()
-                box_j = (j // self.order)
-                this_box_index = (box_i * self.order) + box_j
                 if self[i][j] > 0:
                     continue
+                this_box_index = ((i // self.order) * self.order) + (j // self.order)
                 self._possibles[i][j] = self._poss_rows[i].intersection(
                     self._poss_cols[j]).intersection(self._poss_box[this_box_index])
 
@@ -274,8 +271,8 @@ class Sudoku(object):
 
         """
         simple_found = False
-        for i in six.moves.range(self.side):
-            for j in six.moves.range(self.side):
+        for i in utils.range_(self.side):
+            for j in utils.range_(self.side):
                 if self[i][j] > 0:
                     continue
                 p = self._possibles[i][j]
@@ -295,9 +292,9 @@ class Sudoku(object):
         :rtype: bool
 
         """
-        for i in six.moves.range(self.side):
+        for i in utils.range_(self.side):
             box_i = (i // self.order) * self.order
-            for j in six.moves.range(self.side):
+            for j in utils.range_(self.side):
                 box_j = (j // self.order) * self.order
                 # Skip if this cell is determined already.
                 if self[i][j] > 0:
@@ -305,7 +302,7 @@ class Sudoku(object):
 
                 # Look for hidden single in rows.
                 p = self._possibles[i][j]
-                for k in six.moves.range(self.side):
+                for k in utils.range_(self.side):
                     if k == j:
                         continue
                     p = p.difference(self._possibles[i][k])
@@ -317,7 +314,7 @@ class Sudoku(object):
 
                 # Look for hidden single in columns
                 p = self._possibles[i][j]
-                for k in six.moves.range(self.side):
+                for k in utils.range_(self.side):
                     if k == i:
                         continue
                     p = p.difference(self._possibles[k][j])
@@ -329,8 +326,8 @@ class Sudoku(object):
 
                 # Look for hidden single in box
                 p = self._possibles[i][j]
-                for k in six.moves.range(box_i, box_i + self.order):
-                    for kk in six.moves.range(box_j, box_j + self.order):
+                for k in utils.range_(box_i, box_i + self.order):
+                    for kk in utils.range_(box_j, box_j + self.order):
                         if k == i and kk == j:
                             continue
                         p = p.difference(self._possibles[k][kk])

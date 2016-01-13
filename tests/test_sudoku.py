@@ -6,7 +6,7 @@
 
 .. module:: test_sudoku
     :platform: Unix, Windows
-    :synopsis: 
+    :synopsis:
 
 .. moduleauthor:: hbldh <henrik.blidh@nedomkull.com>
 
@@ -24,8 +24,8 @@ import os
 import six
 from nose.tools import raises
 
-from hbldhdoku.sudoku import Sudoku
-from hbldhdoku.exceptions import SudokuException, SudokuHasNoSolutionError, SudokuTooDifficultError
+from dlxsudoku.sudoku import Sudoku
+from dlxsudoku.exceptions import SudokuException, SudokuHasNoSolutionError, SudokuTooDifficultError
 
 
 class TestSudoku(object):
@@ -57,6 +57,15 @@ class TestSudoku(object):
         s.solve(verbose=True)
         correct_solution = Sudoku.load_file(os.path.join(self.test_dir, 'hard_sol.sud'))
         assert s == correct_solution
+
+    def test_to_oneliner_method(self):
+        s = Sudoku.load_file(os.path.join(self.test_dir, 'hard.sud'))
+        s.solve(verbose=True)
+        correct_solution = Sudoku.load_file(os.path.join(self.test_dir, 'hard_sol.sud'))
+        assert s == correct_solution
+        oneliner = s.to_oneliner()
+        oneliner_parsed = Sudoku.parse_from_file_object(six.StringIO(six.b(oneliner).decode('ascii')))
+        assert oneliner_parsed == correct_solution
 
     @raises(SudokuTooDifficultError)
     def test_solve_very_hard_sudoku_raises_error_if_brute_force_disallowed(self):

@@ -19,12 +19,14 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
-import six
-
+try:
+    range_ = xrange
+except NameError:
+    range_ = range
 
 def get_list(n_rows, fill_with=0):
     return [fill_with, ] * n_rows
 
 
 def get_list_of_lists(n_rows, n_cols, fill_with=0):
-    return [get_list(n_rows, fill_with) for k in six.moves.range(n_cols)]
+    return [get_list(n_rows, fill_with) for k in range_(n_cols)]
