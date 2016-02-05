@@ -1,6 +1,9 @@
 # DLXSudoku
 
 [![Build Status](https://travis-ci.org/hbldh/dlxsudoku.svg)](https://travis-ci.org/hbldh/dlxsudoku)
+[![PyPi version](https://img.shields.io/pypi/v/dlxsudoku.svg)](https://pypi.python.org/pypi/dlxsudoku)
+[![PyPi downloads](https://img.shields.io/pypi/dm/dlxsudoku.svg)](https://pypi.python.org/pypi/dlxsudoku)
+[![PyPi license](https://img.shields.io/pypi/l/dlxsudoku.svg)](https://pypi.python.org/pypi/dlxsudoku)
 
 Sudoku Solver written in pure Python with no dependencies.
 
