@@ -354,7 +354,7 @@ def main():
     group.add_argument('--sudoku', type=str, default=None, help="The raw text Sudoku to solve.")
     group.add_argument('--path', type=str, default=None, help="Path to the Sudoku to solve.")
     parser.add_argument('-v', action='store_true', help="Print solution steps.")
-    parser.add_argument('--no-brute-force', action='store_false', help="Print solution steps.")
+    parser.add_argument('--no-brute-force', action='store_false', help="Disable Dancing Links algorithm solving.")
     parser.add_argument('--oneliner', action='store_true', help="Print oneliner solution.")
     args = parser.parse_args()
 
