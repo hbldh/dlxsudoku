@@ -180,3 +180,9 @@ class TestSudoku(object):
         sys.argv = ["solve-sudoku", "--path", os.path.join(self.test_dir, 'simple.sud')]
         s = main()
         assert s.is_solved
+
+    def test_command_line_solver_4(self):
+        sudoku_string = "030467050920010006067300148301006027400850600090200400005624001203000504040030702"
+        sys.argv = ["solve-sudoku", "--sudoku", sudoku_string, '--oneliner']
+        s = main()
+        assert s == "138467259924518376567392148351946827472851693896273415785624931213789564649135782"

@@ -355,6 +355,7 @@ def main():
     group.add_argument('--path', type=str, default=None, help="Path to the Sudoku to solve.")
     parser.add_argument('-v', action='store_true', help="Print solution steps.")
     parser.add_argument('--no-brute-force', action='store_false', help="Print solution steps.")
+    parser.add_argument('--oneliner', action='store_true', help="Print oneliner solution.")
     args = parser.parse_args()
 
     if args.path is not None:
@@ -362,8 +363,11 @@ def main():
     else:
         s = Sudoku(args.sudoku)
     s.solve(verbose=args.v, allow_brute_force=args.no_brute_force)
-    print(s)
-    return s
+
+    if args.oneliner:
+        return s.to_oneliner()
+    else:
+        return s
 
 if __name__ == "__main__":
     main()
