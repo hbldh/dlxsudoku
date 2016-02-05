@@ -32,3 +32,8 @@ class SudokuTooDifficultError(SudokuException):
 class SudokuHasNoSolutionError(SudokuException):
     """Raised when no solution is possible for this Sudoku."""
     pass
+
+
+class SudokuHasMultipleSolutionsError(SudokuException):
+    """Raised when more than one solution is available for this Sudoku."""
+    pass

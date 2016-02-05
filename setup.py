@@ -30,7 +30,7 @@ except:
 
 setup(
     name='dlxsudoku',
-    version='0.9.2.dev1',
+    version='0.9.2a1',
     author='Henrik Blidh',
     author_email='henrik.blidh@nedomkull.com',
     description='Sudoku Solver in pure Python with no dependencies',
@@ -56,4 +56,9 @@ setup(
     package_data={},
     dependency_links=[],
     ext_modules=[],
+    entry_points={
+        'console_scripts': [
+            'solve-sudoku = dlxsudoku.sudoku:main'
+        ]
+    },
 )

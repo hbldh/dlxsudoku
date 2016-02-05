@@ -18,7 +18,7 @@ import os
 import copy
 import math
 
-from dlxsudoku.exceptions import SudokuHasNoSolutionError, SudokuTooDifficultError
+from dlxsudoku.exceptions import SudokuHasNoSolutionError, SudokuTooDifficultError, SudokuHasMultipleSolutionsError
 from dlxsudoku import utils
 from dlxsudoku.dancing_links import DancingLinksSolver
 
@@ -39,7 +39,6 @@ class Sudoku(object):
         self.order, self.comment, self._matrix = \
             self._parse_from_string(string_input)
 
-        self.comment = ''
         self.side = self.order ** 2
         self.solution_steps = []
 
@@ -102,7 +101,7 @@ class Sudoku(object):
         return order, comment, matrix
 
     def __str__(self):
-        if self.comment:
+        if len(self.comment) > 0:
             prefix = "{0}".format(self.comment)
         else:
             prefix = ''
@@ -227,15 +226,15 @@ class Sudoku(object):
             # Else, if singles_found is True, run another iteration to see if new singles have shown up.
             if not singles_found:
                 if allow_brute_force:
-                    dlxs = DancingLinksSolver(copy.deepcopy(self._matrix))
-                    solutions = list(dlxs.solve())
+                    try:
+                        dlxs = DancingLinksSolver(copy.deepcopy(self._matrix))
+                        solutions = list(dlxs.solve())
+                    except:
+                        raise SudokuHasNoSolutionError("Brute Force method failed.")
                     if len(solutions) == 1:
                         self._matrix = solutions[0]
                     elif len(solutions) > 1:
-                        print("This Sudoku has multiple solutions!")
-                        self._matrix = solutions[0]
-                    else:
-                        raise SudokuHasNoSolutionError("Brute Force method failed.")
+                        raise SudokuHasMultipleSolutionsError("This Sudoku has multiple solutions!")
                     self.solution_steps.append("BRUTE FORCE - Dancing Links")
                     break
                 else:
@@ -351,14 +350,20 @@ class Sudoku(object):
 def main():
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('path', type=str, help="Path to the Sudoku to solve.")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--sudoku', type=str, default=None, help="The raw text Sudoku to solve.")
+    group.add_argument('--path', type=str, default=None, help="Path to the Sudoku to solve.")
     parser.add_argument('-v', action='store_true', help="Print solution steps.")
     parser.add_argument('--no-brute-force', action='store_false', help="Print solution steps.")
     args = parser.parse_args()
 
-    s = Sudoku.load_file(os.path.abspath(os.path.expanduser(args.path)))
+    if args.path is not None:
+        s = Sudoku.load_file(os.path.abspath(os.path.expanduser(args.path)))
+    else:
+        s = Sudoku(args.sudoku)
     s.solve(verbose=args.v, allow_brute_force=args.no_brute_force)
     print(s)
+    return s
 
 if __name__ == "__main__":
     main()
