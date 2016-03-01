@@ -21,167 +21,190 @@ from __future__ import absolute_import
 
 import os
 import sys
+
 try:
     import urllib.request as urlrequest
 except ImportError:
     import urllib as urlrequest
 
-from nose.tools import raises
+import pytest
 
 from dlxsudoku.sudoku import Sudoku, main
 from dlxsudoku.utils import range_
 from dlxsudoku.exceptions import SudokuException, SudokuHasNoSolutionError, SudokuTooDifficultError, SudokuHasMultipleSolutionsError
 
 
-class TestSudoku(object):
-    """Test Suite for Sudoku solver."""
+_test_dir = os.path.dirname(os.path.abspath(__file__))
 
-    def __init__(self):
-        self.test_dir = os.path.dirname(os.path.abspath(__file__))
 
-    def test_solve_simple_sudoku(self):
-        s = Sudoku.load_file(os.path.join(self.test_dir, 'simple.sud'))
-        s.solve()
-        correct_solution = Sudoku.load_file(os.path.join(self.test_dir, 'simple_sol.sud'))
-        assert s == correct_solution
+def test_solve_simple_sudoku():
+    s = Sudoku.load_file(os.path.join(_test_dir, 'simple.sud'))
+    s.solve()
+    correct_solution = Sudoku.load_file(os.path.join(_test_dir, 'simple_sol.sud'))
+    assert s == correct_solution
 
-    def test_solve_simple_sudoku_read_from_flat_file(self):
-        s = Sudoku.load_file(os.path.join(self.test_dir, 'simple_flat.sud'))
-        s.solve()
-        correct_solution = Sudoku.load_file(os.path.join(self.test_dir, 'simple_sol.sud'))
-        assert s == correct_solution
 
-    def test_solve_medium_sudoku(self):
-        s = Sudoku.load_file(os.path.join(self.test_dir, 'medium.sud'))
-        s.solve()
-        correct_solution = Sudoku.load_file(os.path.join(self.test_dir, 'medium_sol.sud'))
-        assert s == correct_solution
+def test_solve_simple_sudoku_read_from_flat_file():
+    s = Sudoku.load_file(os.path.join(_test_dir, 'simple_flat.sud'))
+    s.solve()
+    correct_solution = Sudoku.load_file(os.path.join(_test_dir, 'simple_sol.sud'))
+    assert s == correct_solution
+    
 
-    def test_solve_hard_sudoku(self):
-        s = Sudoku.load_file(os.path.join(self.test_dir, 'hard.sud'))
-        s.solve(verbose=True)
-        correct_solution = Sudoku.load_file(os.path.join(self.test_dir, 'hard_sol.sud'))
-        assert s == correct_solution
+def test_solve_medium_sudoku():
+    s = Sudoku.load_file(os.path.join(_test_dir, 'medium.sud'))
+    s.solve()
+    correct_solution = Sudoku.load_file(os.path.join(_test_dir, 'medium_sol.sud'))
+    assert s == correct_solution
 
-    def test_to_oneliner_method(self):
-        s = Sudoku.load_file(os.path.join(self.test_dir, 'hard.sud'))
-        s.solve(verbose=True)
-        correct_solution = Sudoku.load_file(os.path.join(self.test_dir, 'hard_sol.sud'))
-        assert s == correct_solution
-        oneliner = s.to_oneliner()
-        oneliner_parsed = Sudoku(oneliner)
-        assert oneliner_parsed == correct_solution
 
-    @raises(SudokuTooDifficultError)
-    def test_solve_very_hard_sudoku_raises_error_if_brute_force_disallowed(self):
-        s = Sudoku.load_file(os.path.join(self.test_dir, 'very_hard.sud'))
+def test_solve_hard_sudoku():
+    s = Sudoku.load_file(os.path.join(_test_dir, 'hard.sud'))
+    s.solve(verbose=True)
+    correct_solution = Sudoku.load_file(os.path.join(_test_dir, 'hard_sol.sud'))
+    assert s == correct_solution
+    
+
+def test_to_oneliner_method():
+    s = Sudoku.load_file(os.path.join(_test_dir, 'hard.sud'))
+    s.solve(verbose=True)
+    correct_solution = Sudoku.load_file(os.path.join(_test_dir, 'hard_sol.sud'))
+    assert s == correct_solution
+    oneliner = s.to_oneliner()
+    oneliner_parsed = Sudoku(oneliner)
+    assert oneliner_parsed == correct_solution
+
+
+def test_solve_very_hard_sudoku_raises_error_if_brute_force_disallowed():
+    s = Sudoku.load_file(os.path.join(_test_dir, 'very_hard.sud'))
+    with pytest.raises(SudokuTooDifficultError):
         s.solve(verbose=True, allow_brute_force=False)
-        correct_solution = Sudoku.load_file(os.path.join(self.test_dir, 'very_hard_sol.sud'))
-        assert s == correct_solution
+    correct_solution = Sudoku.load_file(os.path.join(_test_dir, 'very_hard_sol.sud'))
+    assert s != correct_solution
 
-    def test_solve_very_hard_sudoku_with_brute_force(self):
-        s = Sudoku.load_file(os.path.join(self.test_dir, 'very_hard.sud'))
+
+def test_solve_very_hard_sudoku_with_brute_force():
+    s = Sudoku.load_file(os.path.join(_test_dir, 'very_hard.sud'))
+    s.solve(verbose=True, allow_brute_force=True)
+    correct_solution = Sudoku.load_file(os.path.join(_test_dir, 'very_hard_sol.sud'))
+    assert s == correct_solution
+    assert 'BRUTE FORCE' in "".join(s.solution_steps)
+
+
+def test_solve_multiple_solutions():
+    s = Sudoku("***4*******9*******3**7*******7*********5*32*4**86***55*3****8*7983**4****6**9***")
+    with pytest.raises(SudokuHasMultipleSolutionsError):
         s.solve(verbose=True, allow_brute_force=True)
-        correct_solution = Sudoku.load_file(os.path.join(self.test_dir, 'very_hard_sol.sud'))
-        assert s == correct_solution
-        assert 'BRUTE FORCE' in "".join(s.solution_steps)
 
-    @raises(SudokuHasMultipleSolutionsError)
-    def test_solve_multiple_solutions(self):
-        s = Sudoku("***4*******9*******3**7*******7*********5*32*4**86***55*3****8*7983**4****6**9***")
-        s.solve(verbose=True, allow_brute_force=True)
 
-    @raises(SudokuHasNoSolutionError)
-    def test_raises_error_when_unsolvable(self):
-        s = Sudoku.load_file(os.path.join(self.test_dir, 'hard.sud'))
-        s._matrix[0][0] = 2
+def test_raises_error_when_unsolvable():
+    s = Sudoku.load_file(os.path.join(_test_dir, 'hard.sud'))
+    s._matrix[0][0] = 2
+    with pytest.raises(SudokuHasNoSolutionError):
         s.solve()
 
-    @raises(SudokuHasNoSolutionError)
-    def test_raises_error_when_unsolvable_2(self):
-        s = Sudoku.load_file(os.path.join(self.test_dir, 'hard.sud'))
-        s._matrix[2][7] = 6
+
+def test_raises_error_when_unsolvable_2():
+    s = Sudoku.load_file(os.path.join(_test_dir, 'hard.sud'))
+    s._matrix[2][7] = 6
+    with pytest.raises(SudokuHasNoSolutionError):
         s.solve()
 
-    @raises(SudokuHasNoSolutionError)
-    def test_raises_error_when_unsolvable_3(self):
-        s = Sudoku("***4*******9***5***3**7***2***7*********5*32*4**86***55*3****8*7983**4*2**6**9***")
+
+def test_raises_error_when_unsolvable_3():
+    s = Sudoku("***4*******9***5***3**7***2***7*********5*32*4**86***55*3****8*7983**4*2**6**9***")
+    with pytest.raises(SudokuHasNoSolutionError):
         s.solve(verbose=True, allow_brute_force=True)
 
-    def test_equality(self):
-        s = Sudoku.load_file(os.path.join(self.test_dir, 'hard_sol.sud'))
-        s2 = Sudoku.load_file(os.path.join(self.test_dir, 'medium_sol.sud'))
-        s3 = Sudoku.load_file(os.path.join(self.test_dir, 'hard_sol.sud'))
-        assert s != s2
-        assert s == s3
-        assert s != 5
 
-    def test_printing(self):
-        s = Sudoku.load_file(os.path.join(self.test_dir, 'hard_sol.sud'))
-        print(s)
-        s = Sudoku.load_file(os.path.join(self.test_dir, 'simple_flat.sud'))
-        print(s)
-        assert str(s) == repr(s)
+def test_equality():
+    s = Sudoku.load_file(os.path.join(_test_dir, 'hard_sol.sud'))
+    s2 = Sudoku.load_file(os.path.join(_test_dir, 'medium_sol.sud'))
+    s3 = Sudoku.load_file(os.path.join(_test_dir, 'hard_sol.sud'))
+    assert s != s2
+    assert s == s3
+    assert s != 5
 
-    def test_project_euler_sudokus(self):
-        def test_fcn(input):
-            input[0] = b"# " + input[0]
-            s = Sudoku("".join([i.decode("utf-8") for i in input]).strip())
-            s.solve()
-            assert s.is_solved
+
+def test_printing():
+    s = Sudoku.load_file(os.path.join(_test_dir, 'hard_sol.sud'))
+    print(s)
+    s = Sudoku.load_file(os.path.join(_test_dir, 'simple_flat.sud'))
+    print(s)
+    assert str(s) == repr(s)
+
+
+@pytest.fixture
+def project_euler_sudokus():
+    try:
         r = urlrequest.urlopen("https://projecteuler.net/project/resources/p096_sudoku.txt")
         sudokus = r.readlines()
-        for k in range_(0, len(sudokus), 10):
-            yield test_fcn, sudokus[k:k+10]
+        sudokus = [sudokus[k:k+10] for k in range_(0, len(sudokus), 10)]
+    except:
+        sudokus = []
+    return sudokus
 
-    def test_README_code(self):
-        sudoku_string_1 = "030467050920010006067300148301006027400850600090200400005624001203000504040030702"
-        sudoku_string_2 = "# Example Sudoku\n" + \
-                          "*72****6*\n" + \
-                          "***72*9*4\n" + \
-                          "*9*1****2\n" + \
-                          "*******4*\n" + \
-                          "82*4*71**\n" + \
-                          "**9*6*8**\n" + \
-                          "***9**6**\n" + \
-                          "**3*72*9*\n" + \
-                          "*6*843*7*"
 
-        s1 = Sudoku(sudoku_string_1)
-        s1.solve()
-        assert s1.is_solved
+@pytest.mark.parametrize('sudoku', project_euler_sudokus())
+def test_project_euler_sudokus(sudoku):
+    sudoku[0] = b"# " + sudoku[0]
+    s = Sudoku("".join([i.decode("utf-8") for i in input]).strip())
+    s.solve()
+    assert s.is_solved
 
-        s2 = Sudoku(sudoku_string_2)
-        s2.solve()
-        assert s2.is_solved
 
-    def test_command_line_solver_1(self):
-        sudoku_string = "030467050920010006067300148301006027400850600090200400005624001203000504040030702"
-        sys.argv = ["solve-sudoku", "--sudoku", sudoku_string]
-        s = main()
-        assert s.is_solved
+def test_README_code():
+    sudoku_string_1 = "030467050920010006067300148301006027400850600090200400005624001203000504040030702"
+    sudoku_string_2 = "# Example Sudoku\n" + \
+                      "*72****6*\n" + \
+                      "***72*9*4\n" + \
+                      "*9*1****2\n" + \
+                      "*******4*\n" + \
+                      "82*4*71**\n" + \
+                      "**9*6*8**\n" + \
+                      "***9**6**\n" + \
+                      "**3*72*9*\n" + \
+                      "*6*843*7*"
 
-    def test_command_line_solver_2(self):
-        sudoku_string = "# Example Sudoku\n" + \
-                        "*72****6*\n" + \
-                        "***72*9*4\n" + \
-                        "*9*1****2\n" + \
-                        "*******4*\n" + \
-                        "82*4*71**\n" + \
-                        "**9*6*8**\n" + \
-                        "***9**6**\n" + \
-                        "**3*72*9*\n" + \
-                        "*6*843*7*"
-        sys.argv = ["solve-sudoku", "--sudoku", sudoku_string]
-        s = main()
-        assert s.is_solved
+    s1 = Sudoku(sudoku_string_1)
+    s1.solve()
+    assert s1.is_solved
 
-    def test_command_line_solver_3(self):
-        sys.argv = ["solve-sudoku", "--path", os.path.join(self.test_dir, 'simple.sud')]
-        s = main()
-        assert s.is_solved
+    s2 = Sudoku(sudoku_string_2)
+    s2.solve()
+    assert s2.is_solved
 
-    def test_command_line_solver_4(self):
+
+def test_command_line_solver_1():
+    sudoku_string = "030467050920010006067300148301006027400850600090200400005624001203000504040030702"
+    sys.argv = ["solve-sudoku", "--sudoku", sudoku_string]
+    s = main()
+    assert s.is_solved
+
+
+def test_command_line_solver_2():
+    sudoku_string = "# Example Sudoku\n" + \
+                    "*72****6*\n" + \
+                    "***72*9*4\n" + \
+                    "*9*1****2\n" + \
+                    "*******4*\n" + \
+                    "82*4*71**\n" + \
+                    "**9*6*8**\n" + \
+                    "***9**6**\n" + \
+                    "**3*72*9*\n" + \
+                    "*6*843*7*"
+    sys.argv = ["solve-sudoku", "--sudoku", sudoku_string]
+    s = main()
+    assert s.is_solved
+
+
+def test_command_line_solver_3():
+    sys.argv = ["solve-sudoku", "--path", os.path.join(_test_dir, 'simple.sud')]
+    s = main()
+    assert s.is_solved
+
+
+def test_command_line_solver_4():
         sudoku_string = "030467050920010006067300148301006027400850600090200400005624001203000504040030702"
         sys.argv = ["solve-sudoku", "--sudoku", sudoku_string, '--oneliner']
         s = main()

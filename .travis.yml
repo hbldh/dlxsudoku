@@ -20,5 +20,9 @@ branches:
     - master
     - develop
 install:
-  - "pip install coverage"
-script: nosetests tests --with-coverage --cover-package=dlxsudoku
+  - "pip install pytest"
+  - "pip install pytest-cov"
+  - "pip install python-coveralls"
+script: py.test tests/ --cov dlxsudoku --cov-report term-missing
+after_success:
+  - coveralls

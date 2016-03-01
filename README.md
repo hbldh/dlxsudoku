@@ -21,9 +21,9 @@ Install by calling:
 
 ## Testing
 
-Tests can be run using `nosetests`:
+Tests can be run using `pytest`:
 
-    nosetests tests
+    py.test tests
 
 The tests make a HTTP request to a file containing several 
 Sudokus on [Project Euler](https://projecteuler.net/project/resources/p096_sudoku.txt).
