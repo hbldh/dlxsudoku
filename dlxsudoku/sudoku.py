@@ -102,7 +102,7 @@ class Sudoku(object):
 
     def __str__(self):
         if len(self.comment) > 0:
-            prefix = "{0}".format(self.comment)
+            prefix = "{0}\n".format(self.comment)
         else:
             prefix = ''
         sudoku = ''

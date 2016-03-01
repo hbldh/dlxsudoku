@@ -21,9 +21,9 @@ Install by calling:
 
 ## Testing
 
-Tests can be run using `nosetests`:
+Tests can be run using `pytest`:
 
-    nosetests tests
+    py.test tests
 
 The tests make a HTTP request to a file containing several 
 Sudokus on [Project Euler](https://projecteuler.net/project/resources/p096_sudoku.txt).
@@ -88,3 +88,8 @@ or as a one-liner:
 
 Any character other than `[1-9]` may be used as a placeholder for unknowns.
 
+## References
+
+The Dancing Links code has been adapted from 
+[Algorithm X in 30 lines!](http://www.cs.mcgill.ca/~aassaf9/python/algorithm_x.html), 
+only modified slightly to accommodate class structure and Python 2.6.

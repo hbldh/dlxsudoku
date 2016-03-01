@@ -1,0 +1,6 @@
+[run]
+branch = True
+source = dlxsudoku
+include = */dlxsudoku/*
+omit =
+    */setup.py
