@@ -23,6 +23,7 @@ install:
   - "pip install pytest"
   - "pip install pytest-cov"
   - "pip install python-coveralls"
+  - "pip install -e ."
 script: py.test tests/ --cov dlxsudoku --cov-report term-missing
 after_success:
   - coveralls
