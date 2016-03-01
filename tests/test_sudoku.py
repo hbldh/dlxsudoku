@@ -148,7 +148,7 @@ def project_euler_sudokus():
 @pytest.mark.parametrize('sudoku', project_euler_sudokus())
 def test_project_euler_sudokus(sudoku):
     sudoku[0] = b"# " + sudoku[0]
-    s = Sudoku("".join([i.decode("utf-8") for i in input]).strip())
+    s = Sudoku("".join([i.decode("utf-8") for i in sudoku]).strip())
     s.solve()
     assert s.is_solved
 
