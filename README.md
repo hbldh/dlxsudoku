@@ -4,6 +4,7 @@
 [![PyPi version](https://img.shields.io/pypi/v/dlxsudoku.svg)](https://pypi.python.org/pypi/dlxsudoku)
 [![PyPi downloads](https://img.shields.io/pypi/dm/dlxsudoku.svg)](https://pypi.python.org/pypi/dlxsudoku)
 [![PyPi license](https://img.shields.io/pypi/l/dlxsudoku.svg)](https://pypi.python.org/pypi/dlxsudoku)
+[![Coverage Status](https://coveralls.io/repos/github/hbldh/dlxsudoku/badge.svg?branch=master)](https://coveralls.io/github/hbldh/dlxsudoku?branch=master)
 
 Sudoku Solver written in pure Python with no dependencies.
 
