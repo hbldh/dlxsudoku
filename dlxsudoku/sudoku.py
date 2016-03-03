@@ -226,14 +226,22 @@ class Sudoku(object):
             # Else, if singles_found is True, run another iteration to see if new singles have shown up.
             if not singles_found:
                 if allow_brute_force:
+                    solution = None
                     try:
                         dlxs = DancingLinksSolver(copy.deepcopy(self._matrix))
-                        solutions = list(dlxs.solve())
-                    except:
+                        solutions = dlxs.solve()
+                        solution = next(solutions)
+                        more_solutions = next(solutions)
+                    except StopIteration as e:
+                        if solution is not None:
+                            self._matrix = solution
+                        else:
+                            raise SudokuHasNoSolutionError("Dancing Links solver could not find any solution.")
+                    except Exception as e:
                         raise SudokuHasNoSolutionError("Brute Force method failed.")
-                    if len(solutions) == 1:
-                        self._matrix = solutions[0]
-                    elif len(solutions) > 1:
+                    else:
+                        # We end up here if the second `next(solutions)` works,
+                        # i.e. if multiple solutions exist.
                         raise SudokuHasMultipleSolutionsError("This Sudoku has multiple solutions!")
                     self.solution_steps.append("BRUTE FORCE - Dancing Links")
                     break
