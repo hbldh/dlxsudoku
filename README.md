@@ -4,18 +4,18 @@
 [![PyPi version](https://img.shields.io/pypi/v/dlxsudoku.svg)](https://pypi.python.org/pypi/dlxsudoku)
 [![PyPi downloads](https://img.shields.io/pypi/dm/dlxsudoku.svg)](https://pypi.python.org/pypi/dlxsudoku)
 [![PyPi license](https://img.shields.io/pypi/l/dlxsudoku.svg)](https://pypi.python.org/pypi/dlxsudoku)
+[![Coverage Status](https://coveralls.io/repos/github/hbldh/dlxsudoku/badge.svg?branch=master)](https://coveralls.io/github/hbldh/dlxsudoku?branch=master)
 
 Sudoku Solver written in pure Python with no dependencies.
 
 It solves Sudokus of sizes `N x N` by pure induction as 
 far as is possible, and then uses an optional 
 [Dancing Links](https://en.wikipedia.org/wiki/Dancing_Links) 
-solver, which is a brute force methodology, when the basic 
-induction is not enough. 
+brute force solver, when the basic induction is not enough. 
 
 ## Installation
 
-Install by calling:
+Install with pip:
 
     pip install dlxsudoku
 
@@ -37,7 +37,6 @@ from dlxsudoku import Sudoku
 
 s = Sudoku.load_file('path/to/sudoku.sud')
 s.solve(verbose=True, allow_brute_force=True)
-
 ```
 
 Alternatively, if your Sudoku is stored in string variable 
@@ -65,6 +64,24 @@ s2 = Sudoku(sudoku_string_2)
 s2.solve()
 print(s2)
 
+```
+
+**DLXSudoko treats a Sudoku with multiple solutions as a faulty one
+and raises a** ``dlxsudoku.exceptions.SudokuHasMultipleSolutionsError`` 
+**exception in such a situation.**
+
+### Use from terminal
+
+DLXSudoku also installs a console entry point. Can solve Sudokus from string or from path:
+ 
+```shell
+solve-sudoku --sudoku 030467050920010006067300148301006027400850600090200400005624001203000504040030702
+```
+
+or 
+
+```shell
+solve-sudoku --path "path/to/sudoku.sud"
 ```
 
 ### Sudoku formatting
