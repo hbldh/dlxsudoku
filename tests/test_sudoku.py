@@ -92,28 +92,28 @@ def test_solve_very_hard_sudoku_with_brute_force():
 
 
 def test_solve_multiple_solutions():
-    s = Sudoku("***4*******9*******3**7*******7*********5*32*4**86***55*3****8*7983**4****6**9***")
     with pytest.raises(SudokuHasMultipleSolutionsError):
+        s = Sudoku("***4*******9*******3**7*******7*********5*32*4**86***55*3****8*7983**4****6**9***")
         s.solve(verbose=True, allow_brute_force=True)
 
 
 def test_raises_error_when_unsolvable():
-    s = Sudoku.load_file(os.path.join(_test_dir, 'hard.sud'))
-    s._matrix[0][0] = 2
     with pytest.raises(SudokuHasNoSolutionError):
+        s = Sudoku.load_file(os.path.join(_test_dir, 'hard.sud'))
+        s._matrix[0][0] = 2
         s.solve()
 
 
 def test_raises_error_when_unsolvable_2():
-    s = Sudoku.load_file(os.path.join(_test_dir, 'hard.sud'))
-    s._matrix[2][7] = 6
     with pytest.raises(SudokuHasNoSolutionError):
+        s = Sudoku.load_file(os.path.join(_test_dir, 'hard.sud'))
+        s._matrix[2][7] = 6
         s.solve()
 
 
-def test_raises_error_when_unsolvable_3():
-    s = Sudoku("***4*******9***5***3**7***2***7*********5*32*4**86***55*3****8*7983**4*2**6**9***")
+def test_raises_error_when_input_is_invalid():
     with pytest.raises(SudokuHasNoSolutionError):
+        s = Sudoku("***4*******9***5***3**7***2***7*********5*32*4**86***55*3****8*7983**4*2**6**9***")
         s.solve(verbose=True, allow_brute_force=True)
 
 

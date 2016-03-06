@@ -17,6 +17,7 @@ from __future__ import print_function
 import os
 import copy
 import math
+from collections import Counter
 
 from dlxsudoku.exceptions import SudokuHasNoSolutionError, SudokuTooDifficultError, SudokuHasMultipleSolutionsError
 from dlxsudoku import utils
@@ -47,6 +48,8 @@ class Sudoku(object):
         self._poss_cols = {}
         self._poss_box = {}
         self._possibles = {}
+
+        self._check_sudoku_validity()
 
     @classmethod
     def load_file(cls, file_path):
@@ -348,6 +351,23 @@ class Sudoku(object):
                     return True
 
         return False
+
+    def _check_sudoku_validity(self):
+        def check_item(item):
+            c = Counter(item)
+            if 0 in c:
+                c.pop(0)
+            assert all([x == 1 for x in c.values()])
+
+        try:
+            for row in self.row_iter():
+                check_item(row)
+            for col in self.col_iter():
+                check_item(col)
+            for box in self.box_iter():
+                check_item(box)
+        except AssertionError:
+            raise SudokuHasNoSolutionError("The input Sudoku was not valid!")
 
     @staticmethod
     def _format_step(step_name, indices, value):
