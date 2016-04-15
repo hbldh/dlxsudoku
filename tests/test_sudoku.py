@@ -29,7 +29,8 @@ except ImportError:
 
 import pytest
 
-from dlxsudoku.sudoku import Sudoku, main
+from dlxsudoku import Sudoku
+from dlxsudoku.sudoku import main
 from dlxsudoku.utils import range_
 from dlxsudoku.exceptions import SudokuException, SudokuHasNoSolutionError, SudokuTooDifficultError, SudokuHasMultipleSolutionsError
 
@@ -49,7 +50,7 @@ def test_solve_simple_sudoku_read_from_flat_file():
     s.solve()
     correct_solution = Sudoku.load_file(os.path.join(_test_dir, 'simple_sol.sud'))
     assert s == correct_solution
-    
+
 
 def test_solve_medium_sudoku():
     s = Sudoku.load_file(os.path.join(_test_dir, 'medium.sud'))
@@ -63,7 +64,7 @@ def test_solve_hard_sudoku():
     s.solve(verbose=True)
     correct_solution = Sudoku.load_file(os.path.join(_test_dir, 'hard_sol.sud'))
     assert s == correct_solution
-    
+
 
 def test_to_oneliner_method():
     s = Sudoku.load_file(os.path.join(_test_dir, 'hard.sud'))
