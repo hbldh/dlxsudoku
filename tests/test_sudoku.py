@@ -127,11 +127,8 @@ def test_equality():
     assert s != 5
 
 
-def test_printing():
+def test_str_repr():
     s = Sudoku.load_file(os.path.join(_test_dir, 'hard_sol.sud'))
-    print(s)
-    s = Sudoku.load_file(os.path.join(_test_dir, 'simple_flat.sud'))
-    print(s)
     assert str(s) == repr(s)
 
 
@@ -176,14 +173,15 @@ def test_README_code():
     assert s2.is_solved
 
 
-def test_command_line_solver_1():
+def test_command_line_solver_1(capsys):
     sudoku_string = "030467050920010006067300148301006027400850600090200400005624001203000504040030702"
-    sys.argv = ["solve-sudoku", "--sudoku", sudoku_string]
-    s = main()
-    assert s.is_solved
+    sys.argv = ["solve-sudoku", "--sudoku", sudoku_string, '--oneliner']
+    main()
+    out, err = capsys.readouterr()
+    assert out.strip() == "138467259924518376567392148351946827472851693896273415785624931213789564649135782"
 
 
-def test_command_line_solver_2():
+def test_command_line_solver_2(capsys):
     sudoku_string = "# Example Sudoku\n" + \
                     "*72****6*\n" + \
                     "***72*9*4\n" + \
@@ -194,19 +192,16 @@ def test_command_line_solver_2():
                     "***9**6**\n" + \
                     "**3*72*9*\n" + \
                     "*6*843*7*"
-    sys.argv = ["solve-sudoku", "--sudoku", sudoku_string]
-    s = main()
-    assert s.is_solved
+    sys.argv = ["solve-sudoku", "--sudoku", sudoku_string, '--oneliner']
+    main()
+    out, err = capsys.readouterr()
+    assert Sudoku(out).is_solved
 
 
-def test_command_line_solver_3():
-    sys.argv = ["solve-sudoku", "--path", os.path.join(_test_dir, 'simple.sud')]
-    s = main()
-    assert s.is_solved
+def test_command_line_solver_3(capsys):
+    sys.argv = ["solve-sudoku", "--path",
+                os.path.join(_test_dir, 'simple.sud'), '--oneliner']
+    main()
+    out, err = capsys.readouterr()
+    assert Sudoku(out).is_solved
 
-
-def test_command_line_solver_4():
-        sudoku_string = "030467050920010006067300148301006027400850600090200400005624001203000504040030702"
-        sys.argv = ["solve-sudoku", "--sudoku", sudoku_string, '--oneliner']
-        s = main()
-        assert s == "138467259924518376567392148351946827472851693896273415785624931213789564649135782"

@@ -30,7 +30,7 @@ except:
 
 setup(
     name='dlxsudoku',
-    version='0.10.2',
+    version='0.10.3',
     author='Henrik Blidh',
     author_email='henrik.blidh@nedomkull.com',
     description='Sudoku Solver in pure Python with no dependencies',
@@ -42,7 +42,6 @@ setup(
         'Operating System :: OS Independent',
         'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
