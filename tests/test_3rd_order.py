@@ -32,7 +32,8 @@ import pytest
 from dlxsudoku import Sudoku
 from dlxsudoku.sudoku import main
 from dlxsudoku.utils import range_
-from dlxsudoku.exceptions import SudokuException, SudokuHasNoSolutionError, SudokuTooDifficultError, SudokuHasMultipleSolutionsError
+from dlxsudoku.exceptions import SudokuException, SudokuHasNoSolutionError, \
+    SudokuTooDifficultError, SudokuHasMultipleSolutionsError
 
 
 _test_dir = os.path.dirname(os.path.abspath(__file__))
@@ -205,3 +206,25 @@ def test_command_line_solver_3(capsys):
     out, err = capsys.readouterr()
     assert Sudoku(out).is_solved
 
+
+simple_string_representation = """
++-----------+-----------+-----------+
+|  *  3  *  |  4  6  7  |  *  5  *  |
+|  9  2  *  |  *  1  *  |  *  *  6  |
+|  *  6  7  |  3  *  *  |  1  4  8  |
++-----------+-----------+-----------+
+|  3  *  1  |  *  *  6  |  *  2  7  |
+|  4  *  *  |  8  5  *  |  6  *  *  |
+|  *  9  *  |  2  *  *  |  4  *  *  |
++-----------+-----------+-----------+
+|  *  *  5  |  6  2  4  |  *  *  1  |
+|  2  *  3  |  *  *  *  |  5  *  4  |
+|  *  4  *  |  *  3  *  |  7  *  2  |
++-----------+-----------+-----------+
+""".strip()
+
+
+def test_string_representation_s1():
+    s = Sudoku.load_file(os.path.join(_test_dir, 'simple.sud'))
+    string_rep = str(s)
+    assert string_rep == simple_string_representation

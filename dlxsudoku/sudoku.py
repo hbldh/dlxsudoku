@@ -19,7 +19,7 @@ import copy
 import math
 from collections import Counter
 
-from dlxsudoku.exceptions import SudokuHasNoSolutionError, SudokuTooDifficultError, SudokuHasMultipleSolutionsError
+from dlxsudoku.exceptions import SudokuHasNoSolutionError, SudokuTooDifficultError, SudokuHasMultipleSolutionsError, SudokuParsingError
 from dlxsudoku import utils
 from dlxsudoku.dancing_links import DancingLinksSolver
 
@@ -83,24 +83,48 @@ class Sudoku(object):
         else:
             comment = ''
 
+        tmp = string_input.replace(comment, '').lower()
+        if 'a' in tmp and 'y' in tmp:
+            digit_parser = lambda x: ord(x.lower()) - ord('a') + 1 \
+                if x.lower() in [chr(c) for c in range(ord('a'), ord('z'))] else 0
+        elif '1' in tmp and 'a' in tmp:
+            digit_parser = lambda x: int(x, 16) + 1 if \
+                x.lower in ('1', '2', '3', '4', '5', '6', '7', '8',
+                            '9', 'a', 'b', 'c', 'd', 'e', 'f') else 0
+        else:
+            digit_parser = lambda x: int(x) if x.isdigit() else 0
+
+        matrix = []
         if len(read_lines) > 1:
             # Assume that Sudoku is defined over several rows.
             order = int(math.sqrt(len(read_lines)))
+
+            for i, line in enumerate(read_lines):
+                digits = line.strip().split(' ')
+                if len(digits) == order ** 2:
+                    # Whitespace as delimiter
+                    matrix.append(list(map(digit_parser, digits)))
+                else:
+                    if order != 3:
+                        raise SudokuParsingError(
+                            "Sudokus of order > 3 cannot be "
+                            "defined without delimiters.")
+                    matrix.append(list(map(
+                        lambda x: int(x) if x.isdigit() else 0, digits[0])))
         else:
             # Sudoku is defined on one line.
             order = int(math.sqrt(math.sqrt(len(read_lines[0]))))
-            read_lines = filter(lambda x: len(x) == (order ** 2), [read_lines[0][i:(i + order ** 2)] for
-                                i in utils.range_(len(read_lines[0])) if i % (order ** 2) == 0])
-        matrix = utils.get_list_of_lists(
-            order ** 2, order ** 2, fill_with=0)
+            if order != 3:
+                raise SudokuParsingError(
+                    "Sudokus of order > 3 cannot be input as one-liner..")
+            digits = list(map(
+                lambda x: int(x) if x.isdigit() else 0, read_lines[0]))
+            matrix = []
+            i = 0
+            for j in range(order ** 2, (order ** 2) ** 2 + 1, order ** 2):
+                matrix.append(digits[i:j])
+                i = j
 
-        for i, line in enumerate(read_lines):
-            line = line.strip()
-            for j, value in enumerate(line):
-                if value.isdigit() and int(value):
-                    matrix[i][j] = int(value)
-                else:
-                    matrix[i][j] = 0
         return order, comment, matrix
 
     def __str__(self):
@@ -109,12 +133,31 @@ class Sudoku(object):
         else:
             prefix = ''
         sudoku = ''
+
+        if self.order != 3:
+            formatter = lambda v: " {0:>2d} ".format(v) if v != 0 else '  * '
+        else:
+            formatter = lambda v: " {0:d} ".format(v) if v != 0 else ' * '
+
         for i, row in enumerate(self.row_iter()):
-            if i % self.order == 0 and i > 0:
-                str_row = '-' * self.side
-                sudoku += "+".join([str_row[j:j + self.order] for j in range(0, len(str_row), self.order)]) + '\n'
-            str_row = "".join([str(v) for v in row]).replace('0', '*')
-            sudoku += "|".join([str_row[j:j + self.order] for j in range(0, len(str_row), self.order)]) + '\n'
+            if i % self.order == 0:
+                str_row = ['+-']
+                elements = ['-' * len(formatter(1)) for _ in range(self.side)]
+                k = 0
+                for kk in range(self.order, self.side + 1, self.order):
+                    str_row += elements[k:kk]
+                    str_row.append('-+-')
+                    k = kk
+                sudoku += "".join(str_row)[:-1] + '\n'
+            elements = [formatter(v) for v in row]
+            k = 0
+            str_row = ['| ']
+            for kk in range(self.order, self.side + 1, self.order):
+                str_row += elements[k:kk]
+                str_row.append(' | ')
+                k = kk
+            sudoku += "".join(str_row)[:-1] + '\n'
+        sudoku += sudoku.splitlines()[0]
         return prefix + sudoku
 
     def __repr__(self):
@@ -151,7 +194,7 @@ class Sudoku(object):
 
     def col(self, n):
         """Get the n:th column of the Sudoku"""
-        return [r[n] for r in self.row_iter()]
+        return [list(r)[n] for r in self.row_iter()]
 
     def col_iter(self):
         """Get an iterator over all columns in the Sudoku"""
@@ -172,7 +215,7 @@ class Sudoku(object):
         """Get an iterator over all boxes in the Sudoku"""
         for i in utils.range_(self.order):
             for j in utils.range_(self.order):
-                yield self.box(i * 3, j * 3)
+                yield self.box(i * self.order, j * self.order)
 
     def set_cell(self, i, j, value):
         """Set a cell's value, with a series of safety checks
@@ -401,6 +444,7 @@ def main():
         print(s.to_oneliner())
     else:
         print(s)
+
 
 if __name__ == "__main__":
     main()
