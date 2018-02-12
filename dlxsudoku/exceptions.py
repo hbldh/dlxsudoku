@@ -37,3 +37,8 @@ class SudokuHasNoSolutionError(SudokuException):
 class SudokuHasMultipleSolutionsError(SudokuException):
     """Raised when more than one solution is available for this Sudoku."""
     pass
+
+
+class SudokuParsingError(SudokuException):
+    """Raised when the parsing of input fails."""
+    pass

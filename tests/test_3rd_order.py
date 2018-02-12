@@ -29,9 +29,11 @@ except ImportError:
 
 import pytest
 
-from dlxsudoku.sudoku import Sudoku, main
+from dlxsudoku import Sudoku
+from dlxsudoku.sudoku import main
 from dlxsudoku.utils import range_
-from dlxsudoku.exceptions import SudokuException, SudokuHasNoSolutionError, SudokuTooDifficultError, SudokuHasMultipleSolutionsError
+from dlxsudoku.exceptions import SudokuException, SudokuHasNoSolutionError, \
+    SudokuTooDifficultError, SudokuHasMultipleSolutionsError
 
 
 _test_dir = os.path.dirname(os.path.abspath(__file__))
@@ -49,7 +51,7 @@ def test_solve_simple_sudoku_read_from_flat_file():
     s.solve()
     correct_solution = Sudoku.load_file(os.path.join(_test_dir, 'simple_sol.sud'))
     assert s == correct_solution
-    
+
 
 def test_solve_medium_sudoku():
     s = Sudoku.load_file(os.path.join(_test_dir, 'medium.sud'))
@@ -63,7 +65,7 @@ def test_solve_hard_sudoku():
     s.solve(verbose=True)
     correct_solution = Sudoku.load_file(os.path.join(_test_dir, 'hard_sol.sud'))
     assert s == correct_solution
-    
+
 
 def test_to_oneliner_method():
     s = Sudoku.load_file(os.path.join(_test_dir, 'hard.sud'))
@@ -92,28 +94,28 @@ def test_solve_very_hard_sudoku_with_brute_force():
 
 
 def test_solve_multiple_solutions():
-    s = Sudoku("***4*******9*******3**7*******7*********5*32*4**86***55*3****8*7983**4****6**9***")
     with pytest.raises(SudokuHasMultipleSolutionsError):
+        s = Sudoku("***4*******9*******3**7*******7*********5*32*4**86***55*3****8*7983**4****6**9***")
         s.solve(verbose=True, allow_brute_force=True)
 
 
 def test_raises_error_when_unsolvable():
-    s = Sudoku.load_file(os.path.join(_test_dir, 'hard.sud'))
-    s._matrix[0][0] = 2
     with pytest.raises(SudokuHasNoSolutionError):
+        s = Sudoku.load_file(os.path.join(_test_dir, 'hard.sud'))
+        s._matrix[0][0] = 2
         s.solve()
 
 
 def test_raises_error_when_unsolvable_2():
-    s = Sudoku.load_file(os.path.join(_test_dir, 'hard.sud'))
-    s._matrix[2][7] = 6
     with pytest.raises(SudokuHasNoSolutionError):
+        s = Sudoku.load_file(os.path.join(_test_dir, 'hard.sud'))
+        s._matrix[2][7] = 6
         s.solve()
 
 
-def test_raises_error_when_unsolvable_3():
-    s = Sudoku("***4*******9***5***3**7***2***7*********5*32*4**86***55*3****8*7983**4*2**6**9***")
+def test_raises_error_when_input_is_invalid():
     with pytest.raises(SudokuHasNoSolutionError):
+        s = Sudoku("***4*******9***5***3**7***2***7*********5*32*4**86***55*3****8*7983**4*2**6**9***")
         s.solve(verbose=True, allow_brute_force=True)
 
 
@@ -126,11 +128,8 @@ def test_equality():
     assert s != 5
 
 
-def test_printing():
+def test_str_repr():
     s = Sudoku.load_file(os.path.join(_test_dir, 'hard_sol.sud'))
-    print(s)
-    s = Sudoku.load_file(os.path.join(_test_dir, 'simple_flat.sud'))
-    print(s)
     assert str(s) == repr(s)
 
 
@@ -175,14 +174,15 @@ def test_README_code():
     assert s2.is_solved
 
 
-def test_command_line_solver_1():
+def test_command_line_solver_1(capsys):
     sudoku_string = "030467050920010006067300148301006027400850600090200400005624001203000504040030702"
-    sys.argv = ["solve-sudoku", "--sudoku", sudoku_string]
-    s = main()
-    assert s.is_solved
+    sys.argv = ["solve-sudoku", "--sudoku", sudoku_string, '--oneliner']
+    main()
+    out, err = capsys.readouterr()
+    assert out.strip() == "138467259924518376567392148351946827472851693896273415785624931213789564649135782"
 
 
-def test_command_line_solver_2():
+def test_command_line_solver_2(capsys):
     sudoku_string = "# Example Sudoku\n" + \
                     "*72****6*\n" + \
                     "***72*9*4\n" + \
@@ -193,19 +193,38 @@ def test_command_line_solver_2():
                     "***9**6**\n" + \
                     "**3*72*9*\n" + \
                     "*6*843*7*"
-    sys.argv = ["solve-sudoku", "--sudoku", sudoku_string]
-    s = main()
-    assert s.is_solved
+    sys.argv = ["solve-sudoku", "--sudoku", sudoku_string, '--oneliner']
+    main()
+    out, err = capsys.readouterr()
+    assert Sudoku(out).is_solved
 
 
-def test_command_line_solver_3():
-    sys.argv = ["solve-sudoku", "--path", os.path.join(_test_dir, 'simple.sud')]
-    s = main()
-    assert s.is_solved
+def test_command_line_solver_3(capsys):
+    sys.argv = ["solve-sudoku", "--path",
+                os.path.join(_test_dir, 'simple.sud'), '--oneliner']
+    main()
+    out, err = capsys.readouterr()
+    assert Sudoku(out).is_solved
 
 
-def test_command_line_solver_4():
-        sudoku_string = "030467050920010006067300148301006027400850600090200400005624001203000504040030702"
-        sys.argv = ["solve-sudoku", "--sudoku", sudoku_string, '--oneliner']
-        s = main()
-        assert s == "138467259924518376567392148351946827472851693896273415785624931213789564649135782"
+simple_string_representation = """
++-----------+-----------+-----------+
+|  *  3  *  |  4  6  7  |  *  5  *  |
+|  9  2  *  |  *  1  *  |  *  *  6  |
+|  *  6  7  |  3  *  *  |  1  4  8  |
++-----------+-----------+-----------+
+|  3  *  1  |  *  *  6  |  *  2  7  |
+|  4  *  *  |  8  5  *  |  6  *  *  |
+|  *  9  *  |  2  *  *  |  4  *  *  |
++-----------+-----------+-----------+
+|  *  *  5  |  6  2  4  |  *  *  1  |
+|  2  *  3  |  *  *  *  |  5  *  4  |
+|  *  4  *  |  *  3  *  |  7  *  2  |
++-----------+-----------+-----------+
+""".strip()
+
+
+def test_string_representation_s1():
+    s = Sudoku.load_file(os.path.join(_test_dir, 'simple.sud'))
+    string_rep = str(s)
+    assert string_rep == simple_string_representation
