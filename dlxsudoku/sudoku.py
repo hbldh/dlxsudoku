@@ -17,6 +17,7 @@ from __future__ import print_function
 import os
 import copy
 import math
+from collections import Counter
 
 from dlxsudoku.exceptions import SudokuHasNoSolutionError, SudokuTooDifficultError, SudokuHasMultipleSolutionsError
 from dlxsudoku import utils
@@ -48,6 +49,8 @@ class Sudoku(object):
         self._poss_box = {}
         self._possibles = {}
 
+        self._check_sudoku_validity()
+
     @classmethod
     def load_file(cls, file_path):
         """Load a Sudoku from file.
@@ -74,7 +77,7 @@ class Sudoku(object):
 
         """
         # Check if comment line is present.
-        read_lines = string_input.split('\n')
+        read_lines = list(filter(None, string_input.split('\n')))
         if read_lines[0].startswith('#'):
             comment = read_lines.pop(0)
         else:
@@ -349,6 +352,23 @@ class Sudoku(object):
 
         return False
 
+    def _check_sudoku_validity(self):
+        def check_item(item):
+            c = Counter(item)
+            if 0 in c:
+                c.pop(0)
+            assert all([x == 1 for x in c.values()])
+
+        try:
+            for row in self.row_iter():
+                check_item(row)
+            for col in self.col_iter():
+                check_item(col)
+            for box in self.box_iter():
+                check_item(box)
+        except AssertionError:
+            raise SudokuHasNoSolutionError("The input Sudoku was not valid!")
+
     @staticmethod
     def _format_step(step_name, indices, value):
         """Help method for formatting solution step history."""
@@ -359,11 +379,16 @@ def main():
     import argparse
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--sudoku', type=str, default=None, help="The raw text Sudoku to solve.")
-    group.add_argument('--path', type=str, default=None, help="Path to the Sudoku to solve.")
-    parser.add_argument('-v', action='store_true', help="Print solution steps.")
-    parser.add_argument('--no-brute-force', action='store_false', help="Disable Dancing Links algorithm solving.")
-    parser.add_argument('--oneliner', action='store_true', help="Print oneliner solution.")
+    group.add_argument('--sudoku', type=str, default=None,
+                       help="The raw text Sudoku to solve.")
+    group.add_argument('--path', type=str, default=None,
+                       help="Path to the Sudoku to solve.")
+    parser.add_argument('-v', action='store_true',
+                        help="Print solution steps.")
+    parser.add_argument('--no-brute-force', action='store_false',
+                        help="Disable Dancing Links algorithm solving.")
+    parser.add_argument('--oneliner', action='store_true',
+                        help="Print oneliner solution.")
     args = parser.parse_args()
 
     if args.path is not None:
@@ -373,9 +398,9 @@ def main():
     s.solve(verbose=args.v, allow_brute_force=args.no_brute_force)
 
     if args.oneliner:
-        return s.to_oneliner()
+        print(s.to_oneliner())
     else:
-        return s
+        print(s)
 
 if __name__ == "__main__":
     main()
