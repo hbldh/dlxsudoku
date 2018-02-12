@@ -31,8 +31,7 @@ import pytest
 
 from dlxsudoku import Sudoku
 from dlxsudoku.sudoku import main
-from dlxsudoku.utils import range_
-from dlxsudoku.exceptions import SudokuException, SudokuHasNoSolutionError, \
+from dlxsudoku.exceptions import SudokuHasNoSolutionError, \
     SudokuTooDifficultError, SudokuHasMultipleSolutionsError
 
 
@@ -138,7 +137,7 @@ def project_euler_sudokus():
     try:
         r = urlrequest.urlopen("https://projecteuler.net/project/resources/p096_sudoku.txt")
         sudokus = r.readlines()
-        sudokus = [sudokus[k:k+10] for k in range_(0, len(sudokus), 10)]
+        sudokus = [sudokus[k:k+10] for k in range(0, len(sudokus), 10)]
     except:
         sudokus = []
     return sudokus

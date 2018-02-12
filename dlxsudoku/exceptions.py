@@ -2,11 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 :mod:`exceptions`
-==================
-
-.. module:: exceptions
-    :platform: Unix, Windows
-    :synopsis: 
+=================
 
 .. moduleauthor:: hbldh <henrik.blidh@nedomkull.com>
 

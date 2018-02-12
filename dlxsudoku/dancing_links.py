@@ -4,9 +4,7 @@
 :mod:`dancing_links`
 ==================
 
-.. module:: dancing_links
-    :platform: Unix, Windows
-    :synopsis: An implementation of Donald Knuth's Dancing Links in Python.
+An implementation of Donald Knuth's Dancing Links in Python.
 
 Created on 2015-10-19, 22:53
 

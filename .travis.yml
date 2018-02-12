@@ -4,13 +4,7 @@ python:
   - 2.7
   - 3.5
   - 3.6
-  - "3.7-dev"
-  - "nightly"
   - pypy
-matrix:
-  allow_failures:
-    - python: "3.7-dev"
-    - python: pypy
 branches:
   only:
     - master

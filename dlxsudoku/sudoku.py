@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-.. module:: sudoku
-   :platform: Unix, Windows
-   :synopsis: A class for handling and solving Sudoku.
+:mod:`sudoku`
+=============
+
+A class for handling and solving Sudoku.
 
 .. moduleauthor:: Henrik Blidh <henrik.blidh@nedomkull.com>
 
 Created on 2013-01-15, 19:26
+
 """
 
 from __future__ import division
@@ -20,8 +22,12 @@ import math
 from collections import Counter
 
 from dlxsudoku.exceptions import SudokuHasNoSolutionError, SudokuTooDifficultError, SudokuHasMultipleSolutionsError, SudokuParsingError
-from dlxsudoku import utils
 from dlxsudoku.dancing_links import DancingLinksSolver
+
+try:
+    range_ = xrange
+except NameError:
+    range_ = range
 
 
 class Sudoku(object):
@@ -43,7 +49,7 @@ class Sudoku(object):
         self.side = self.order ** 2
         self.solution_steps = []
 
-        self._values = tuple(utils.range_(0, (self.order ** 2) + 1))
+        self._values = tuple(range_(0, (self.order ** 2) + 1))
         self._poss_rows = {}
         self._poss_cols = {}
         self._poss_box = {}
@@ -170,8 +176,8 @@ class Sudoku(object):
         if isinstance(other, Sudoku):
             if self.order != other.order:
                 return False
-            for i in utils.range_(self.side):
-                for j in utils.range_(self.side):
+            for i in range_(self.side):
+                for j in range_(self.side):
                     if self[i][j] != other[i][j]:
                         return False
             return True
@@ -189,16 +195,16 @@ class Sudoku(object):
 
     def row_iter(self):
         """Get an iterator over all rows in the Sudoku"""
-        for k in utils.range_(self.side):
+        for k in range_(self.side):
             yield self.row(k)
 
     def col(self, n):
         """Get the n:th column of the Sudoku"""
-        return [list(r)[n] for r in self.row_iter()]
+        return [self._matrix[i][n] for i in range_(self.side)]
 
     def col_iter(self):
         """Get an iterator over all columns in the Sudoku"""
-        for k in utils.range_(self.side):
+        for k in range_(self.side):
             yield self.col(k)
 
     def box(self, row, col):
@@ -206,15 +212,15 @@ class Sudoku(object):
         box = []
         box_i = (row // self.order) * self.order
         box_j = (col // self.order) * self.order
-        for i in utils.range_(box_i, box_i + self.order):
-            for j in utils.range_(box_j, box_j + self.order):
+        for i in range_(box_i, box_i + self.order):
+            for j in range_(box_j, box_j + self.order):
                 box.append(self[i][j])
         return box
 
     def box_iter(self):
         """Get an iterator over all boxes in the Sudoku"""
-        for i in utils.range_(self.order):
-            for j in utils.range_(self.order):
+        for i in range_(self.order):
+            for j in range_(self.order):
                 yield self.box(i * self.order, j * self.order)
 
     def set_cell(self, i, j, value):
@@ -309,9 +315,9 @@ class Sudoku(object):
 
         # Iterate over the entire Sudoku and combine information about possible values
         # from rows, columns and boxes to get a set of possible values for each cell.
-        for i in utils.range_(self.side):
+        for i in range_(self.side):
             self._possibles[i] = {}
-            for j in utils.range_(self.side):
+            for j in range_(self.side):
                 self._possibles[i][j] = set()
                 if self[i][j] > 0:
                     continue
@@ -327,8 +333,8 @@ class Sudoku(object):
 
         """
         simple_found = False
-        for i in utils.range_(self.side):
-            for j in utils.range_(self.side):
+        for i in range_(self.side):
+            for j in range_(self.side):
                 if self[i][j] > 0:
                     continue
                 p = self._possibles[i][j]
@@ -348,9 +354,9 @@ class Sudoku(object):
         :rtype: bool
 
         """
-        for i in utils.range_(self.side):
+        for i in range_(self.side):
             box_i = (i // self.order) * self.order
-            for j in utils.range_(self.side):
+            for j in range_(self.side):
                 box_j = (j // self.order) * self.order
                 # Skip if this cell is determined already.
                 if self[i][j] > 0:
@@ -358,7 +364,7 @@ class Sudoku(object):
 
                 # Look for hidden single in rows.
                 p = self._possibles[i][j]
-                for k in utils.range_(self.side):
+                for k in range_(self.side):
                     if k == j:
                         continue
                     p = p.difference(self._possibles[i][k])
@@ -370,7 +376,7 @@ class Sudoku(object):
 
                 # Look for hidden single in columns
                 p = self._possibles[i][j]
-                for k in utils.range_(self.side):
+                for k in range_(self.side):
                     if k == i:
                         continue
                     p = p.difference(self._possibles[k][j])
@@ -382,8 +388,8 @@ class Sudoku(object):
 
                 # Look for hidden single in box
                 p = self._possibles[i][j]
-                for k in utils.range_(box_i, box_i + self.order):
-                    for kk in utils.range_(box_j, box_j + self.order):
+                for k in range_(box_i, box_i + self.order):
+                    for kk in range_(box_j, box_j + self.order):
                         if k == i and kk == j:
                             continue
                         p = p.difference(self._possibles[k][kk])

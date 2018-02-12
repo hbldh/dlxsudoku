@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/hbldh/dlxsudoku.svg)](https://travis-ci.org/hbldh/dlxsudoku)
 [![PyPi version](https://img.shields.io/pypi/v/dlxsudoku.svg)](https://pypi.python.org/pypi/dlxsudoku)
-[![PyPi downloads](https://img.shields.io/pypi/dm/dlxsudoku.svg)](https://pypi.python.org/pypi/dlxsudoku)
 [![PyPi license](https://img.shields.io/pypi/l/dlxsudoku.svg)](https://pypi.python.org/pypi/dlxsudoku)
 [![Coverage Status](https://coveralls.io/repos/github/hbldh/dlxsudoku/badge.svg?branch=master)](https://coveralls.io/github/hbldh/dlxsudoku?branch=master)
 
@@ -12,6 +11,8 @@ It solves Sudokus of sizes `N x N` by pure induction as
 far as is possible, and then uses an optional 
 [Dancing Links](https://en.wikipedia.org/wiki/Dancing_Links) 
 brute force solver, when the basic induction is not enough. 
+
+
 
 ## Installation
 
