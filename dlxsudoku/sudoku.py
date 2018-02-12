@@ -95,8 +95,8 @@ class Sudoku(object):
                 if x.lower() in [chr(c) for c in range(ord('a'), ord('z'))] else 0
         elif '1' in tmp and 'a' in tmp:
             digit_parser = lambda x: int(x, 16) + 1 if \
-                x.lower in ('1', '2', '3', '4', '5', '6', '7', '8',
-                            '9', 'a', 'b', 'c', 'd', 'e', 'f') else 0
+                x.lower() in ('0', '1', '2', '3', '4', '5', '6', '7', '8',
+                              '9', 'a', 'b', 'c', 'd', 'e', 'f') else 0
         else:
             digit_parser = lambda x: int(x) if x.isdigit() else 0
 

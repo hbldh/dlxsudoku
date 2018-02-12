@@ -1,62 +1,118 @@
 # -*- coding: utf-8 -*-
 """
-:mod:`setup`
-============
+DLXSudoku
+=========
+ hbldh <henrik.blidh@nedomkull.com>
 
-.. module:: setup
-    :platform: Unix, Windows
-    :synopsis: The Python Packaging setup file.
-
-.. moduleauthor:: hbldh <henrik.blidh@nedomkull.com>
-
-Created on 2015-09-17, 12:39
+Created on 2018-02-12, 22:49
 
 """
 
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+# Note: To use the 'upload' functionality of this file, you must:
+#   $ pip install twine
+
+import io
 import os
-from setuptools import setup, find_packages
+import sys
+from shutil import rmtree
 
-# Get the long description from the README file
+from setuptools import find_packages, setup, Command
+
+# Package meta-data.
+NAME = 'dlxsudoku'
+DESCRIPTION = 'Sudoku Solver in pure Python with no dependencies'
+URL = 'https://github.com/hbldh/dlxsudoku'
+EMAIL = 'henrik.blidh@nedomkull.com'
+AUTHOR = 'Henrik Blidh'
+
+# What packages are required for this module to be executed?
+REQUIRED = [
+
+]
+
+here = os.path.abspath(os.path.dirname(__file__))
 try:
-    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.rst')) as f:
+    with io.open(os.path.join(here, 'README.rst'), encoding='utf-8') as f:
         long_description = f.read()
 except:
-    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md')) as f:
+    with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
         long_description = f.read()
 
+about = {}
+with open(os.path.join(here, NAME, '__version__.py')) as f:
+    exec(f.read(), about)
+
+
+class UploadCommand(Command):
+    """Support setup.py upload."""
+
+    description = 'Build and publish the package.'
+    user_options = []
+
+    @staticmethod
+    def status(s):
+        """Prints things in bold."""
+        print('\033[1m{0}\033[0m'.format(s))
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        try:
+            self.status('Removing previous builds…')
+            rmtree(os.path.join(here, 'dist'))
+        except OSError:
+            pass
+
+        self.status('Building Source and Wheel (universal) distribution…')
+        os.system('{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
+
+        self.status('Uploading the package to PyPi via Twine…')
+        os.system('twine upload dist/*')
+
+        sys.exit()
+
+
+# Where the magic happens:
 setup(
-    name='dlxsudoku',
-    version='0.10.3',
-    author='Henrik Blidh',
-    author_email='henrik.blidh@nedomkull.com',
-    description='Sudoku Solver in pure Python with no dependencies',
+    name=NAME,
+    version=about['__version__'],
+    description=DESCRIPTION,
     long_description=long_description,
-    license='GNU GPLv2',
-    url='https://github.com/hbldh/dlxsudoku',
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Operating System :: OS Independent',
-        'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Intended Audience :: Developers',
-    ],
-    keywords=["sudoku", "sudoku solver", "dancing links"],
-    packages=find_packages(exclude=('tests', )),
-    install_requires=[],
-    package_data={},
-    dependency_links=[],
-    ext_modules=[],
+    author=AUTHOR,
+    author_email=EMAIL,
+    url=URL,
+    packages=find_packages(exclude=('tests',)),
     entry_points={
         'console_scripts': [
             'solve-sudoku = dlxsudoku.sudoku:main'
         ]
+    },
+    install_requires=REQUIRED,
+    include_package_data=True,
+    license='GPLv2',
+    classifiers=[
+        # Trove classifiers
+        # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
+        'Development Status :: 4 - Beta',
+        'Operating System :: OS Independent',
+        'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Programming Language :: Python :: Implementation :: PyPy'
+    ],
+    # $ setup.py publish support.
+    cmdclass={
+        'upload': UploadCommand,
     },
 )

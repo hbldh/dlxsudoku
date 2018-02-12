@@ -75,6 +75,26 @@ s1_string_representation = """# Fourth order Sudoku
 """.strip()
 
 
+s2 = """# https://krazydad.com/hexsudoku/sfiles/KD_HexSudoku_STH_8_v27.pdf #1
+3 * b * 8 2 7 f * * 6 * * 0 * *
+6 9 * * * 1 * * * * * e * * 8 2
+* * * * 4 * * * * * * * d 9 6 *
+* c 1 * * 3 9 6 * * 2 d 7 * * *
+* * c 5 * * * * b * * * * 1 * *
+b * * * * * * * 4 0 * * 2 * f 8
+* 7 a * c * e * * d * * 4 * * *
+d * * * * 8 4 * 1 * c 9 * * * e
+8 * * * e 0 * 4 * 2 3 * * * * 7
+* * * c * * 6 * * 7 * 0 * 2 3 *
+2 0 * 6 * * d a * * * * * * * b
+* * 9 * * * * 3 * * * * e 6 * *
+* * * 8 0 6 * * 2 c e * * d a *
+* b 6 7 * * * * * * * 3 * * * *
+1 a * * 9 * * * * * b * * * 7 0
+* * 0 * * b * * 5 9 d f * 4 * 6
+""".strip()
+
+
 def test_parsing_s1():
     order, comment, matrix = Sudoku._parse_from_string(s1)
     assert order == 4
@@ -95,3 +115,17 @@ def test_string_representation_s1():
     s = Sudoku(s1)
     string_rep = str(s)
     assert string_rep == s1_string_representation
+
+
+def test_parsing_s2():
+    order, comment, matrix = Sudoku._parse_from_string(s2)
+    assert order == 4
+    assert comment == "# https://krazydad.com/hexsudoku/sfiles/KD_HexSudoku_STH_8_v27.pdf #1"
+    assert len(matrix) == 16
+    assert len(matrix[0]) == 16
+
+
+def test_solving_s2():
+    s = Sudoku(s2)
+    s.solve()
+    assert s.is_solved

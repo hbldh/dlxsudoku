@@ -77,12 +77,7 @@ class DancingLinksSolver(object):
 
     @staticmethod
     def _exact_cover(X, Y):
-        # Dict comprehension does not exist in Python 2.6...
-        # X = {j: set() for j in X}
-        X_out = {}
-        for j in X:
-            X_out[j] = set()
-
+        X_out = {j: set() for j in X}
         for i, row in Y.items():
             for j in row:
                 X_out[j].add(i)
