@@ -1,6 +1,6 @@
 # DLXSudoku
 
-[![Build Status](https://travis-ci.org/hbldh/dlxsudoku.svg)](https://travis-ci.org/hbldh/dlxsudoku)
+![Build and Test](https://github.com/hbldh/dlxsudoku/workflows/Build%20and%20Test/badge.svg)
 [![PyPi version](https://img.shields.io/pypi/v/dlxsudoku.svg)](https://pypi.python.org/pypi/dlxsudoku)
 [![PyPi license](https://img.shields.io/pypi/l/dlxsudoku.svg)](https://pypi.python.org/pypi/dlxsudoku)
 [![Coverage Status](https://coveralls.io/repos/github/hbldh/dlxsudoku/badge.svg?branch=master)](https://coveralls.io/github/hbldh/dlxsudoku?branch=master)
@@ -22,7 +22,7 @@ Install with pip:
 
 Tests can be run using `pytest`:
 
-    py.test tests
+    pytest tests/
 
 The tests make a HTTP request to a file containing several 
 Sudokus on [Project Euler](https://projecteuler.net/project/resources/p096_sudoku.txt).
