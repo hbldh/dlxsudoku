@@ -50,10 +50,12 @@ class DancingLinksSolver(object):
         R, C = int(math.sqrt(len(self.sudoku))), int(math.sqrt(len(self.sudoku[0])))
         N = R * C
 
-        X = ([("rc", rc) for rc in product(range(N), range(N))] +
-             [("rn", rn) for rn in product(range(N), range(1, N + 1))] +
-             [("cn", cn) for cn in product(range(N), range(1, N + 1))] +
-             [("bn", bn) for bn in product(range(N), range(1, N + 1))])
+        X = (
+            [("rc", rc) for rc in product(range(N), range(N))]
+            + [("rn", rn) for rn in product(range(N), range(1, N + 1))]
+            + [("cn", cn) for cn in product(range(N), range(1, N + 1))]
+            + [("bn", bn) for bn in product(range(N), range(1, N + 1))]
+        )
         Y = dict()
 
         for r, c, n in product(range(N), range(N), range(1, N + 1)):
@@ -62,7 +64,8 @@ class DancingLinksSolver(object):
                 ("rc", (r, c)),
                 ("rn", (r, n)),
                 ("cn", (c, n)),
-                ("bn", (b, n))]
+                ("bn", (b, n)),
+            ]
 
         X, Y = self._exact_cover(X, Y)
 

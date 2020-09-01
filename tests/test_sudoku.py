@@ -132,7 +132,6 @@ def test_str_repr():
     assert str(s) == repr(s)
 
 
-@pytest.fixture
 def project_euler_sudokus():
     try:
         r = urlrequest.urlopen("https://projecteuler.net/project/resources/p096_sudoku.txt")

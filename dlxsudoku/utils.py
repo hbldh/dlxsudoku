@@ -26,7 +26,7 @@ except NameError:
 
 
 def get_list(n_rows, fill_with=0):
-    return [fill_with, ] * n_rows
+    return [fill_with,] * n_rows
 
 
 def get_list_of_lists(n_rows, n_cols, fill_with=0):

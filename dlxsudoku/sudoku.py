@@ -19,7 +19,11 @@ import copy
 import math
 from collections import Counter
 
-from dlxsudoku.exceptions import SudokuHasNoSolutionError, SudokuTooDifficultError, SudokuHasMultipleSolutionsError
+from dlxsudoku.exceptions import (
+    SudokuHasNoSolutionError,
+    SudokuTooDifficultError,
+    SudokuHasMultipleSolutionsError,
+)
 from dlxsudoku import utils
 from dlxsudoku.dancing_links import DancingLinksSolver
 
@@ -37,8 +41,7 @@ class Sudoku(object):
 
     def __init__(self, string_input):
 
-        self.order, self.comment, self._matrix = \
-            self._parse_from_string(string_input)
+        self.order, self.comment, self._matrix = self._parse_from_string(string_input)
 
         self.side = self.order ** 2
         self.solution_steps = []
@@ -62,7 +65,7 @@ class Sudoku(object):
         :rtype: :py:class:`dlxsudoku.sudoku.Sudoku`
 
         """
-        with open(os.path.abspath(file_path), 'rt') as f:
+        with open(os.path.abspath(file_path), "rt") as f:
             s = Sudoku(f.read().strip())
         return s
 
@@ -77,11 +80,11 @@ class Sudoku(object):
 
         """
         # Check if comment line is present.
-        read_lines = list(filter(None, string_input.split('\n')))
-        if read_lines[0].startswith('#'):
+        read_lines = list(filter(None, string_input.split("\n")))
+        if read_lines[0].startswith("#"):
             comment = read_lines.pop(0)
         else:
-            comment = ''
+            comment = ""
 
         if len(read_lines) > 1:
             # Assume that Sudoku is defined over several rows.
@@ -89,10 +92,15 @@ class Sudoku(object):
         else:
             # Sudoku is defined on one line.
             order = int(math.sqrt(math.sqrt(len(read_lines[0]))))
-            read_lines = filter(lambda x: len(x) == (order ** 2), [read_lines[0][i:(i + order ** 2)] for
-                                i in utils.range_(len(read_lines[0])) if i % (order ** 2) == 0])
-        matrix = utils.get_list_of_lists(
-            order ** 2, order ** 2, fill_with=0)
+            read_lines = filter(
+                lambda x: len(x) == (order ** 2),
+                [
+                    read_lines[0][i : (i + order ** 2)]
+                    for i in utils.range_(len(read_lines[0]))
+                    if i % (order ** 2) == 0
+                ],
+            )
+        matrix = utils.get_list_of_lists(order ** 2, order ** 2, fill_with=0)
 
         for i, line in enumerate(read_lines):
             line = line.strip()
@@ -107,21 +115,39 @@ class Sudoku(object):
         if len(self.comment) > 0:
             prefix = "{0}\n".format(self.comment)
         else:
-            prefix = ''
-        sudoku = ''
+            prefix = ""
+        sudoku = ""
         for i, row in enumerate(self.row_iter()):
             if i % self.order == 0 and i > 0:
-                str_row = '-' * self.side
-                sudoku += "+".join([str_row[j:j + self.order] for j in range(0, len(str_row), self.order)]) + '\n'
-            str_row = "".join([str(v) for v in row]).replace('0', '*')
-            sudoku += "|".join([str_row[j:j + self.order] for j in range(0, len(str_row), self.order)]) + '\n'
+                str_row = "-" * self.side
+                sudoku += (
+                    "+".join(
+                        [
+                            str_row[j : j + self.order]
+                            for j in range(0, len(str_row), self.order)
+                        ]
+                    )
+                    + "\n"
+                )
+            str_row = "".join([str(v) for v in row]).replace("0", "*")
+            sudoku += (
+                "|".join(
+                    [
+                        str_row[j : j + self.order]
+                        for j in range(0, len(str_row), self.order)
+                    ]
+                )
+                + "\n"
+            )
         return prefix + sudoku
 
     def __repr__(self):
         return str(self)
 
     def to_oneliner(self):
-        return "".join(["".join([str(value) for value in row]) for row in self.row_iter()])
+        return "".join(
+            ["".join([str(value) for value in row]) for row in self.row_iter()]
+        )
 
     def __eq__(self, other):
         if isinstance(other, Sudoku):
@@ -193,7 +219,7 @@ class Sudoku(object):
             value in self._poss_box[(i // self.order) * self.order + (j // self.order)],
             value not in self.row(i),
             value not in self.col(j),
-            value not in self.box(i, j)
+            value not in self.box(i, j),
         ]
 
         if all(bool_tests):
@@ -222,7 +248,9 @@ class Sudoku(object):
             self._update()
 
             # See if any position can be singled out.
-            singles_found = False or self._fill_naked_singles() or self._fill_hidden_singles()
+            singles_found = (
+                False or self._fill_naked_singles() or self._fill_hidden_singles()
+            )
 
             # If singles_found is False, then no new uniquely defined cells were found
             # and this solver cannot solve the Sudoku. We either use brute force or throw an error.
@@ -239,27 +267,39 @@ class Sudoku(object):
                         if solution is not None:
                             self._matrix = solution
                         else:
-                            raise SudokuHasNoSolutionError("Dancing Links solver could not find any solution.")
+                            raise SudokuHasNoSolutionError(
+                                "Dancing Links solver could not find any solution."
+                            )
                     except Exception as e:
                         raise SudokuHasNoSolutionError("Brute Force method failed.")
                     else:
                         # We end up here if the second `next(solutions)` works,
                         # i.e. if multiple solutions exist.
-                        raise SudokuHasMultipleSolutionsError("This Sudoku has multiple solutions!")
+                        raise SudokuHasMultipleSolutionsError(
+                            "This Sudoku has multiple solutions!"
+                        )
                     self.solution_steps.append("BRUTE FORCE - Dancing Links")
                     break
                 else:
                     print(self)
-                    raise SudokuTooDifficultError("This Sudoku requires more advanced methods!")
+                    raise SudokuTooDifficultError(
+                        "This Sudoku requires more advanced methods!"
+                    )
         if verbose:
-            print("Sudoku solved in {0} iterations!\n{1}".format(len(self.solution_steps), self))
+            print(
+                "Sudoku solved in {0} iterations!\n{1}".format(
+                    len(self.solution_steps), self
+                )
+            )
             for step in self.solution_steps:
                 print(step)
 
     def _update(self):
         """Calculate remaining values for each row, column, box and finally cell."""
         # Update possible values in each row, column and box.
-        for i, (row, col, box) in enumerate(zip(self.row_iter(), self.col_iter(), self.box_iter())):
+        for i, (row, col, box) in enumerate(
+            zip(self.row_iter(), self.col_iter(), self.box_iter())
+        ):
             self._poss_rows[i] = set(self._values).difference(set(row))
             self._poss_cols[i] = set(self._values).difference(set(col))
             self._poss_box[i] = set(self._values).difference(set(box))
@@ -273,8 +313,11 @@ class Sudoku(object):
                 if self[i][j] > 0:
                     continue
                 this_box_index = ((i // self.order) * self.order) + (j // self.order)
-                self._possibles[i][j] = self._poss_rows[i].intersection(
-                    self._poss_cols[j]).intersection(self._poss_box[this_box_index])
+                self._possibles[i][j] = (
+                    self._poss_rows[i]
+                    .intersection(self._poss_cols[j])
+                    .intersection(self._poss_box[this_box_index])
+                )
 
     def _fill_naked_singles(self):
         """Look for naked singles, i.e. cells with ony one possible value.
@@ -291,10 +334,16 @@ class Sudoku(object):
                 p = self._possibles[i][j]
                 if len(p) == 1:
                     self.set_cell(i, j, list(p)[0])
-                    self.solution_steps.append(self._format_step("NAKED", (i, j), self[i][j]))
+                    self.solution_steps.append(
+                        self._format_step("NAKED", (i, j), self[i][j])
+                    )
                     simple_found = True
                 elif len(p) == 0:
-                    raise SudokuHasNoSolutionError("Error made! No possible value for ({0},{1})!".format(i + 1, j + 1))
+                    raise SudokuHasNoSolutionError(
+                        "Error made! No possible value for ({0},{1})!".format(
+                            i + 1, j + 1
+                        )
+                    )
 
         return simple_found
 
@@ -322,7 +371,9 @@ class Sudoku(object):
                 if len(p) == 1:
                     # Found a hidden single in a row!
                     self.set_cell(i, j, p.pop())
-                    self.solution_steps.append(self._format_step("HIDDEN-ROW", (i, j), self[i][j]))
+                    self.solution_steps.append(
+                        self._format_step("HIDDEN-ROW", (i, j), self[i][j])
+                    )
                     return True
 
                 # Look for hidden single in columns
@@ -334,7 +385,9 @@ class Sudoku(object):
                 if len(p) == 1:
                     # Found a hidden single in a column!
                     self.set_cell(i, j, p.pop())
-                    self.solution_steps.append(self._format_step("HIDDEN-COL", (i, j), self[i][j]))
+                    self.solution_steps.append(
+                        self._format_step("HIDDEN-COL", (i, j), self[i][j])
+                    )
                     return True
 
                 # Look for hidden single in box
@@ -347,7 +400,9 @@ class Sudoku(object):
                 if len(p) == 1:
                     # Found a hidden single in a box!
                     self.set_cell(i, j, p.pop())
-                    self.solution_steps.append(self._format_step("HIDDEN-BOX", (i, j), self[i][j]))
+                    self.solution_steps.append(
+                        self._format_step("HIDDEN-BOX", (i, j), self[i][j])
+                    )
                     return True
 
         return False
@@ -372,23 +427,31 @@ class Sudoku(object):
     @staticmethod
     def _format_step(step_name, indices, value):
         """Help method for formatting solution step history."""
-        return "[{0},{1}] = {2}, {3}".format(indices[0] + 1, indices[1] + 1, value, step_name)
+        return "[{0},{1}] = {2}, {3}".format(
+            indices[0] + 1, indices[1] + 1, value, step_name
+        )
 
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
-    group.add_argument('--sudoku', type=str, default=None,
-                       help="The raw text Sudoku to solve.")
-    group.add_argument('--path', type=str, default=None,
-                       help="Path to the Sudoku to solve.")
-    parser.add_argument('-v', action='store_true',
-                        help="Print solution steps.")
-    parser.add_argument('--no-brute-force', action='store_false',
-                        help="Disable Dancing Links algorithm solving.")
-    parser.add_argument('--oneliner', action='store_true',
-                        help="Print oneliner solution.")
+    group.add_argument(
+        "--sudoku", type=str, default=None, help="The raw text Sudoku to solve."
+    )
+    group.add_argument(
+        "--path", type=str, default=None, help="Path to the Sudoku to solve."
+    )
+    parser.add_argument("-v", action="store_true", help="Print solution steps.")
+    parser.add_argument(
+        "--no-brute-force",
+        action="store_false",
+        help="Disable Dancing Links algorithm solving.",
+    )
+    parser.add_argument(
+        "--oneliner", action="store_true", help="Print oneliner solution."
+    )
     args = parser.parse_args()
 
     if args.path is not None:
@@ -401,6 +464,7 @@ def main():
         print(s.to_oneliner())
     else:
         print(s)
+
 
 if __name__ == "__main__":
     main()

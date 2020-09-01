@@ -1,12 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-:mod:`exceptions`
-==================
-
-.. module:: exceptions
-    :platform: Unix, Windows
-    :synopsis: 
+Exceptions for DLXSudoku
 
 .. moduleauthor:: hbldh <henrik.blidh@nedomkull.com>
 
@@ -26,14 +21,17 @@ class SudokuException(Exception):
 
 class SudokuTooDifficultError(SudokuException):
     """Raised when this solver is too incompetent to solve this Sudoku."""
+
     pass
 
 
 class SudokuHasNoSolutionError(SudokuException):
     """Raised when no solution is possible for this Sudoku."""
+
     pass
 
 
 class SudokuHasMultipleSolutionsError(SudokuException):
     """Raised when more than one solution is available for this Sudoku."""
+
     pass
